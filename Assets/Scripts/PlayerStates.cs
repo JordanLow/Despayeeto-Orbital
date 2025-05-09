@@ -1,31 +1,26 @@
 using UnityEngine;
 
-public interface PlayerState
+public abstract class PlayerState
 {
-    public abstract void Enter();
-	public abstract void Exit();
-	public abstract void Tick();
+    public virtual void Enter() { }
+	public virtual void Exit() { }
+	public virtual void Tick() { }
+	
+	public virtual Command FilterCommand(Command command) { return command; }
+	
+	public virtual void OnJumpCommand() { }
+	public virtual void OnJabCommand() { }
 }
 
-public class PlayerBaseState : PlayerState
+public abstract class PlayerMovementState : PlayerState
 {
-	private readonly PlayerStateMachine FSM;
+	protected readonly PlayerStateMachine FSM;
 	
-	public PlayerBaseState(PlayerStateMachine ctx) {
+	public PlayerMovementState(PlayerStateMachine ctx) {
 		this.FSM = ctx;
 	}
 	
-	public virtual void Enter() {
-		FSM.jumpListener += Jump;
-		FSM.jabListener += Jab;
-	}
-	
-	public virtual void Exit() {
-		FSM.jumpListener -= Jump;
-		FSM.jabListener -= Jab;
-	}
-	
-	public virtual void Tick() {
+	public override void Tick() {
 		Vector3 cameraForward = FSM.cam.transform.forward; 
 		cameraForward.y = 0;
         Vector3 cameraRight = FSM.cam.transform.right; 
@@ -41,69 +36,60 @@ public class PlayerBaseState : PlayerState
 		if (inputDirection == Vector3.zero) return;
 		FSM.transform.rotation = Quaternion.LookRotation(inputDirection);
 	}
+}
+
+public abstract class PlayerActionState : PlayerState
+{
+	protected readonly PlayerStateMachine FSM;
 	
-	private void Jump() {
+	public PlayerActionState(PlayerStateMachine ctx) {
+		this.FSM = ctx;
+	}
+}
+
+public class PlayerGroundedState : PlayerMovementState
+{
+	public PlayerGroundedState(PlayerStateMachine ctx) : base(ctx) { }
+
+	public override void OnJumpCommand() {
 		FSM.currentVelocity.y = FSM.jumpSpeed;
-	}
-	
-	private void Jab() {
-		
+		// Transition to Jump
 	}
 }
 
-public class PlayerAirborneState : PlayerState
+public class PlayerAirborneState : PlayerMovementState
 {
-	private readonly PlayerStateMachine FSM;
+	public PlayerAirborneState(PlayerStateMachine ctx) : base(ctx) { }
 	
-	public PlayerAirborneState(PlayerStateMachine ctx) {
-		this.FSM = ctx;
-	}
-	
-	public void Enter() {
-		FSM.jabListener += Jab;
-	}
-	
-	public void Exit() {
-		FSM.jabListener -= Jab;
-	}
-	
-	public void Tick() {
-		// If on ground switch back to base
-	}
-	
-	public void Jab() {
-		
+	public override void Tick() {
+		base.Tick();
+		// Check if Grounded and Transition if so
 	}
 }
 
-public class PlayerJabbingState : PlayerBaseState
+public class PlayerIdleState : PlayerActionState
 {
-	private readonly PlayerStateMachine FSM;
+	public PlayerIdleState(PlayerStateMachine ctx) : base(ctx) { }
 	
-	public PlayerJabbingState(PlayerStateMachine ctx) : base(ctx) {
-		this.FSM = ctx;
+	public override void OnJabCommand() {
+		FSM.ActionTransition(FSM.actionStates.Jabbing);
 	}
+}
+
+public class PlayerJabbingState : PlayerActionState
+{
+	public PlayerJabbingState(PlayerStateMachine ctx) : base(ctx) { }
 	
 	public override void Enter() {
-		FSM.jumpListener += Jump;
-		FSM.jabListener += Jab;
+		Debug.Log("Pretend I jabbed");
 	}
 	
 	public override void Exit() {
-		FSM.jumpListener -= Jump;
-		FSM.jabListener -= Jab;
+		Debug.Log("Now I'm done jabbing");
 	}
 	
 	public override void Tick() {
-		
-	}
-	
-	private void Jump() {
-		
-	}
-	
-	private void Jab() {
-		
+		FSM.ActionTransition(FSM.actionStates.Idle);
 	}
 }
 

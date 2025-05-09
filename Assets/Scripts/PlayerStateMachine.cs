@@ -4,43 +4,61 @@ using UnityEngine.InputSystem;
 
 public class PlayerStateMachine : MonoBehaviour
 {
+	// Implementing a Hierarchal Finite State Machine with Orthogonal Regions
 	// Initializing the States
 	
-	// List of States for this State Machine
-	public class States {
-		public PlayerBaseState Base { get; }
+	// Regions and States for this State Machine
+	public class MovementRegion {
+		public PlayerGroundedState Grounded { get; }
 		public PlayerAirborneState Airborne { get; }
+		
+		public MovementRegion(PlayerGroundedState groundedState, 
+			PlayerAirborneState airborneState) {
+			
+			this.Grounded = groundedState;
+			this.Airborne = airborneState;
+		}
+	}
+	
+	public class ActionRegion {
+		public PlayerIdleState Idle { get; }
 		public PlayerJabbingState Jabbing { get; }
 		
-		public States(PlayerBaseState baseState, 
-			PlayerAirborneState airborneState, 
+		public ActionRegion(PlayerIdleState idleState,
 			PlayerJabbingState jabbingState) {
 			
-			this.Base = baseState;
-			this.Airborne = airborneState;
+			this.Idle = idleState;
 			this.Jabbing = jabbingState;
 		}
 	}
 	
-	public States states { get; private set; }
-	private PlayerState currentState;
+	public MovementRegion movementStates { get; private set; }
+	public ActionRegion actionStates { get; private set; }
+	private PlayerMovementState currentMovement;
+	private PlayerActionState currentAction;
 
     // Update is called once per frame
     void Update()
     {
-        this.currentState?.Tick();
+        this.currentMovement?.Tick();
+		this.currentAction?.Tick();
     }
 	
-	public void Transition(PlayerState newState) {
-		this.currentState?.Exit();
-		this.currentState = newState;
-		this.currentState?.Enter();
+	public void MovementTransition(PlayerMovementState newState) {
+		this.currentMovement?.Exit();
+		this.currentMovement = newState;
+		this.currentMovement?.Enter();
+		Debug.Log("Transiting to " + this.currentMovement);
 	}
 	
-	// Input Control Listeners
+	public void ActionTransition(PlayerActionState newState) {
+		this.currentAction?.Exit();
+		this.currentAction = newState;
+		this.currentAction?.Enter();
+		Debug.Log("Transiting to " + this.currentAction);
+	}
 	
-	public Action jumpListener;
-	public Action jabListener;
+	// Input Control
 	public Vector3 inputDirection;
 	
 	public void OnMove(InputValue val) {
@@ -50,11 +68,17 @@ public class PlayerStateMachine : MonoBehaviour
 	}
 	
 	public void OnJump() {
-		jumpListener?.Invoke();
+		Command command = new JumpCommand();
+		command = this.currentMovement.FilterCommand(command);
+		command = this.currentAction.FilterCommand(command);
+		command.execute(this.currentMovement, this.currentAction);
 	}
 	
 	public void OnJab() {
-		jabListener?.Invoke();
+		Command command = new JabCommand();
+		command = this.currentMovement.FilterCommand(command);
+		command = this.currentAction.FilterCommand(command);
+		command.execute(this.currentMovement, this.currentAction);
 	}
 	
 	// Player Values
@@ -69,15 +93,19 @@ public class PlayerStateMachine : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        this.states = new States(
-			new PlayerBaseState(this),
-			new PlayerAirborneState(this),
+        this.movementStates = new MovementRegion(
+			new PlayerGroundedState(this),
+			new PlayerAirborneState(this)
+		);
+		this.actionStates = new ActionRegion(
+			new PlayerIdleState(this),
 			new PlayerJabbingState(this)
 		);
 		this.inputDirection = Vector3.zero;
 		this.currentVelocity = Vector3.zero;
 		this.cam = Camera.main;
 		this.controller = GetComponent<CharacterController>();
-		this.Transition(states.Base);
+		this.MovementTransition(movementStates.Grounded);
+		this.ActionTransition(actionStates.Idle);
     }
 }
