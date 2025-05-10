@@ -50,20 +50,42 @@ public abstract class PlayerActionState : PlayerState
 public class PlayerGroundedState : PlayerMovementState
 {
 	public PlayerGroundedState(PlayerStateMachine ctx) : base(ctx) { }
+	
+	public override void Enter() {
+		
+	}
+
+	public override void Tick() {
+		base.Tick();
+		if (!Physics.CheckSphere(FSM.transform.position + Vector3.down * 0.3f, 0.5f, LayerMask.GetMask("Ground"))) {
+		//if (!FSM.controller.isGrounded) {
+			FSM.MovementTransition(FSM.movementStates.Airborne);
+		}
+	}
 
 	public override void OnJumpCommand() {
 		FSM.currentVelocity.y = FSM.jumpSpeed;
-		// Transition to Jump
+		//FSM.MovementTransition(FSM.movementStates.Airborne);
 	}
 }
 
 public class PlayerAirborneState : PlayerMovementState
 {
 	public PlayerAirborneState(PlayerStateMachine ctx) : base(ctx) { }
+	private float minimumAirborneTime = 0.05f;
+	private float jumpEnterTime;
+	
+	public override void Enter() {
+		jumpEnterTime = Time.time;
+	}
 	
 	public override void Tick() {
 		base.Tick();
-		// Check if Grounded and Transition if so
+		if (Physics.CheckSphere(FSM.transform.position + Vector3.down * 0.3f, 0.5f, LayerMask.GetMask("Ground"))
+		//if (FSM.controller.isGrounded
+		&& Time.time - jumpEnterTime > minimumAirborneTime) {
+			FSM.MovementTransition(FSM.movementStates.Grounded);
+		}
 	}
 }
 
