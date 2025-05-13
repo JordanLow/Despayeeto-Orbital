@@ -31,6 +31,24 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "GearWheel",
+                    "type": "Button",
+                    "id": "dd050036-3c4a-46e5-845d-3c93a5343f62",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "GearSelect",
+                    "type": "Value",
+                    "id": "c065a689-afee-4d5e-94f1-a61340eccd86",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -108,6 +126,39 @@
                     "processors": "",
                     "groups": ";MnK",
                     "action": "Jab",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "5574fc7c-358d-4a3f-8327-2914ce85765a",
+                    "path": "<Keyboard>/q",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "GearWheel",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "3832bd16-6388-44d2-9226-87693e3ba65a",
+                    "path": "<Keyboard>/e",
+                    "interactions": "Hold",
+                    "processors": "",
+                    "groups": ";MnK",
+                    "action": "GearWheel",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "28cb4ae4-615a-4cc7-9391-ce5c29969994",
+                    "path": "<Mouse>/delta",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";MnK",
+                    "action": "GearSelect",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

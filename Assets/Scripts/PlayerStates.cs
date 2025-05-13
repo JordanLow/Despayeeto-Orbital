@@ -57,7 +57,7 @@ public class PlayerGroundedState : PlayerMovementState
 
 	public override void Tick() {
 		base.Tick();
-		if (!Physics.CheckSphere(FSM.transform.position + Vector3.down * 0.3f, 0.5f, LayerMask.GetMask("Ground"))) {
+		if (!Physics.CheckSphere(FSM.transform.position, 0.1f, LayerMask.GetMask("Ground"))) {
 		//if (!FSM.controller.isGrounded) {
 			FSM.MovementTransition(FSM.movementStates.Airborne);
 		}
@@ -81,7 +81,7 @@ public class PlayerAirborneState : PlayerMovementState
 	
 	public override void Tick() {
 		base.Tick();
-		if (Physics.CheckSphere(FSM.transform.position + Vector3.down * 0.3f, 0.5f, LayerMask.GetMask("Ground"))
+		if (Physics.CheckSphere(FSM.transform.position, 0.1f, LayerMask.GetMask("Ground"))
 		//if (FSM.controller.isGrounded
 		&& Time.time - jumpEnterTime > minimumAirborneTime) {
 			FSM.MovementTransition(FSM.movementStates.Grounded);
