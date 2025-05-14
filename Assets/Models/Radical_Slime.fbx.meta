@@ -1,9 +1,19 @@
 fileFormatVersion: 2
-guid: dd5fd1c6a5036284a9868c7e249fcc4c
+guid: 0d8f7bf4ddeb3794fb9bf62bc1892ca1
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Radical Core
+    second: {fileID: 2100000, guid: 5b5bfcefddbe1254dbfad4fbaa7c950e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Radical Slime
+    second: {fileID: 2100000, guid: 0a9aad244c22bf54eb63821d34831e05, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
