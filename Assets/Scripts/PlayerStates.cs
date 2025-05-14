@@ -106,6 +106,7 @@ public class PlayerJabbingState : PlayerActionState
 	private bool followQueued = false;
 	private IAttackDelegate curAttack;
 	private IAttackDelegate[] attackSets;
+	private int qmode = 0;
 
 	public PlayerJabbingState(PlayerStateMachine ctx) : base(ctx) {
 		attackSets = new IAttackDelegate[2] { new RapidsDelegate(), new GentlemanDelegate() };
@@ -113,8 +114,7 @@ public class PlayerJabbingState : PlayerActionState
 	}
 	
 	public override void modeSet(int mode) {
-		Debug.Log("Switching to mode " + mode);
-		curAttack = attackSets[mode];
+		qmode = mode;
 	}
 	
 	public override void Enter() {
@@ -136,6 +136,7 @@ public class PlayerJabbingState : PlayerActionState
 	public override void Tick() {
 		if (curAttack.isFinished) {
 			FSM.ActionTransition(FSM.actionStates.Idle);
+			curAttack = attackSets[qmode];
 		}
 	}
 
