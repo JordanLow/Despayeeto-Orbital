@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Unity.Cinemachine;
 
 public class PlayerStateMachine : MonoBehaviour
 {
@@ -60,9 +61,10 @@ public class PlayerStateMachine : MonoBehaviour
 	
 	// Input Control
 	public Vector3 inputDirection;
+	[SerializeField] GameObject offenseGearWheel;
 	
-	public void OnMove(InputValue val) {
-		Vector2 direction = val.Get<Vector2>() * moveSpeed;
+	public void OnMove(InputAction.CallbackContext context) {
+		Vector2 direction = context.ReadValue<Vector2>() * moveSpeed;
 		this.inputDirection.x = direction.x;
 		this.inputDirection.z = direction.y;
 	}
@@ -81,6 +83,26 @@ public class PlayerStateMachine : MonoBehaviour
 		command.execute(this.currentMovement, this.currentAction);
 	}
 	
+	public void OnGearWheel(InputAction.CallbackContext context) { //Just for offense for now
+		if (context.started) {
+			Time.timeScale = 0.3f;
+			// Pop up HUD
+			offenseGearWheel.SetActive(true);
+			// Disable camera look
+			CinemachineCamera cam = Camera.main.GetComponent<CinemachineBrain>().ActiveVirtualCamera as CinemachineCamera;
+			cam.GetComponent<CinemachineInputAxisController>().enabled = false;
+		} else if (context.canceled) {
+			Time.timeScale = 1f;
+			// Close HUD and queue weapon swap
+			offenseGearWheel.SetActive(false);
+			// Re-enable camera look
+			CinemachineCamera cam = Camera.main.GetComponent<CinemachineBrain>().ActiveVirtualCamera as CinemachineCamera;
+			cam.GetComponent<CinemachineInputAxisController>().enabled = true;
+			//Update Weapon
+			actionStates.Jabbing.modeSet(offenseGearWheel.GetComponent<RadialMenu>().att);
+		}
+	}
+	
 	// Player Values
 	
 	public Camera cam { get; private set; }
@@ -89,6 +111,9 @@ public class PlayerStateMachine : MonoBehaviour
 	
 	[SerializeField] public float moveSpeed { get; } = 8f;
 	[SerializeField] public float jumpSpeed { get; } = 4f;
+	[SerializeField] public GameObject leftPunchPlaceholder;
+	[SerializeField] public GameObject rightPunchPlaceholder;
+	[SerializeField] public GameObject gentlemanPlaceholder;
 	
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()

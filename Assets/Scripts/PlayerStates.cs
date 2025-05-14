@@ -45,6 +45,8 @@ public abstract class PlayerActionState : PlayerState
 	public PlayerActionState(PlayerStateMachine ctx) {
 		this.FSM = ctx;
 	}
+	
+	public virtual void modeSet(int mode) { }
 }
 
 public class PlayerGroundedState : PlayerMovementState
@@ -57,7 +59,7 @@ public class PlayerGroundedState : PlayerMovementState
 
 	public override void Tick() {
 		base.Tick();
-		if (!Physics.CheckSphere(FSM.transform.position + Vector3.down * 0.3f, 0.5f, LayerMask.GetMask("Ground"))) {
+		if (!Physics.CheckSphere(FSM.transform.position, 0.1f, LayerMask.GetMask("Ground"))) {
 		//if (!FSM.controller.isGrounded) {
 			FSM.MovementTransition(FSM.movementStates.Airborne);
 		}
@@ -81,7 +83,7 @@ public class PlayerAirborneState : PlayerMovementState
 	
 	public override void Tick() {
 		base.Tick();
-		if (Physics.CheckSphere(FSM.transform.position + Vector3.down * 0.3f, 0.5f, LayerMask.GetMask("Ground"))
+		if (Physics.CheckSphere(FSM.transform.position, 0.1f, LayerMask.GetMask("Ground"))
 		//if (FSM.controller.isGrounded
 		&& Time.time - jumpEnterTime > minimumAirborneTime) {
 			FSM.MovementTransition(FSM.movementStates.Grounded);
@@ -100,18 +102,45 @@ public class PlayerIdleState : PlayerActionState
 
 public class PlayerJabbingState : PlayerActionState
 {
-	public PlayerJabbingState(PlayerStateMachine ctx) : base(ctx) { }
-	
-	public override void Enter() {
-		Debug.Log("Pretend I jabbed");
+	public float jabEnterTime { get; private set; }
+	private bool followQueued = false;
+	private IAttackDelegate curAttack;
+	private IAttackDelegate[] attackSets;
+
+	public PlayerJabbingState(PlayerStateMachine ctx) : base(ctx) {
+		attackSets = new IAttackDelegate[2] { new RapidsDelegate(), new GentlemanDelegate() };
+		curAttack = attackSets[0];
 	}
 	
-	public override void Exit() {
-		Debug.Log("Now I'm done jabbing");
+	public override void modeSet(int mode) {
+		Debug.Log("Switching to mode " + mode);
+		curAttack = attackSets[mode];
+	}
+	
+	public override void Enter() {
+		jabEnterTime = Time.time;
+		followQueued = false;
+		curAttack.Execute(FSM);
+	}
+
+	public override Command FilterCommand(Command command) { 
+		// Decision tree pending refactor for elegance based on
+		// Representation of attacksets
+		// Right now lists and numbers are used for ease
+		if (curAttack == attackSets[1] && command is JumpCommand) {
+			return new VoidCommand();
+		}
+		return command; 
 	}
 	
 	public override void Tick() {
-		FSM.ActionTransition(FSM.actionStates.Idle);
+		if (curAttack.isFinished) {
+			FSM.ActionTransition(FSM.actionStates.Idle);
+		}
 	}
+
+	//public override OnJabCommand() {
+		
+	//}
 }
 
