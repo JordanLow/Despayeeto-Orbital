@@ -83,7 +83,7 @@ public class PlayerStateMachine : MonoBehaviour
 		command.execute(this.currentMovement, this.currentAction);
 	}
 	
-	public void OnGearWheel(InputAction.CallbackContext context) {
+	public void OnGearWheel(InputAction.CallbackContext context) { //Just for offense for now
 		if (context.started) {
 			Time.timeScale = 0.3f;
 			// Pop up HUD
@@ -98,6 +98,8 @@ public class PlayerStateMachine : MonoBehaviour
 			// Re-enable camera look
 			CinemachineCamera cam = Camera.main.GetComponent<CinemachineBrain>().ActiveVirtualCamera as CinemachineCamera;
 			cam.GetComponent<CinemachineInputAxisController>().enabled = true;
+			//Update Weapon
+			actionStates.Jabbing.modeSet(offenseGearWheel.GetComponent<RadialMenu>().att);
 		}
 	}
 	
@@ -109,6 +111,9 @@ public class PlayerStateMachine : MonoBehaviour
 	
 	[SerializeField] public float moveSpeed { get; } = 8f;
 	[SerializeField] public float jumpSpeed { get; } = 4f;
+	[SerializeField] public GameObject leftPunchPlaceholder;
+	[SerializeField] public GameObject rightPunchPlaceholder;
+	[SerializeField] public GameObject gentlemanPlaceholder;
 	
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
