@@ -21,6 +21,7 @@ public class RadialMenu : MonoBehaviour
 		foreach (Transform child in transform) {
 			if (!child.gameObject.activeInHierarchy) continue;
 			count++;
+			Debug.Log(child.gameObject);
             buttons.Add(child.gameObject);
 		}
 		for (int i = 0; i < count; i++)

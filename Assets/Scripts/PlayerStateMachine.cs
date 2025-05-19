@@ -99,6 +99,7 @@ public class PlayerStateMachine : MonoBehaviour
 			CinemachineCamera cam = Camera.main.GetComponent<CinemachineBrain>().ActiveVirtualCamera as CinemachineCamera;
 			cam.GetComponent<CinemachineInputAxisController>().enabled = true;
 			//Update Weapon
+			Debug.Log("Mode: " + offenseGearWheel.GetComponent<RadialMenu>().att);
 			actionStates.Jabbing.modeSet(offenseGearWheel.GetComponent<RadialMenu>().att);
 		}
 	}

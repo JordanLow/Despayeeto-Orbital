@@ -120,6 +120,7 @@ public class PlayerJabbingState : PlayerActionState
 	public override void Enter() {
 		jabEnterTime = Time.time;
 		followQueued = false;
+		curAttack = attackSets[qmode];
 		curAttack.Execute(FSM);
 	}
 
