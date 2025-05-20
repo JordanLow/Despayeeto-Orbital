@@ -33,6 +33,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "Attenuate",
+                    "type": "Button",
+                    "id": "ee84b2bf-4aec-4dcd-9087-db328878787b",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "GearWheel",
                     "type": "Button",
                     "id": "dd050036-3c4a-46e5-845d-3c93a5343f62",
@@ -140,22 +149,22 @@
                 },
                 {
                     "name": "",
-                    "id": "5574fc7c-358d-4a3f-8327-2914ce85765a",
-                    "path": "<Keyboard>/q",
-                    "interactions": "",
+                    "id": "3832bd16-6388-44d2-9226-87693e3ba65a",
+                    "path": "<Keyboard>/e",
+                    "interactions": "Hold",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";MnK",
                     "action": "GearWheel",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "3832bd16-6388-44d2-9226-87693e3ba65a",
-                    "path": "<Keyboard>/e",
-                    "interactions": "Hold",
+                    "id": "5574fc7c-358d-4a3f-8327-2914ce85765a",
+                    "path": "<Keyboard>/q",
+                    "interactions": "",
                     "processors": "",
-                    "groups": ";MnK",
+                    "groups": "",
                     "action": "GearWheel",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -179,6 +188,17 @@
                     "processors": "",
                     "groups": ";MnK",
                     "action": "Consume",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2c996703-609b-488f-95ff-40e66541ff22",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";MnK",
+                    "action": "Attenuate",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

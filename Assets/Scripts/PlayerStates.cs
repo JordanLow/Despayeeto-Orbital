@@ -10,6 +10,7 @@ public abstract class PlayerState
 	
 	public virtual void OnJumpCommand() { }
 	public virtual void OnJabCommand() { }
+	public virtual void OnAttenuateCommand() { }
 }
 
 public abstract class PlayerMovementState : PlayerState
@@ -25,7 +26,7 @@ public abstract class PlayerMovementState : PlayerState
 		cameraForward.y = 0;
         Vector3 cameraRight = FSM.cam.transform.right; 
 		cameraRight.y = 0;
-		Vector3 inputDirection = FSM.inputDirection;
+		Vector3 inputDirection = FSM.movementAllowed ? FSM.inputDirection : Vector3.zero;
 		Vector3 currentVelocity = FSM.currentVelocity;
 		if (currentVelocity.y > Physics.gravity.y) currentVelocity.y += Physics.gravity.y * Time.deltaTime;
 		inputDirection = inputDirection.z * cameraForward + inputDirection.x * cameraRight;
@@ -98,6 +99,10 @@ public class PlayerIdleState : PlayerActionState
 	public override void OnJabCommand() {
 		FSM.ActionTransition(FSM.actionStates.Jabbing);
 	}
+	
+	public override void OnAttenuateCommand() {
+		FSM.ActionTransition(FSM.actionStates.Attenuate);
+	}
 }
 
 public class PlayerJabbingState : PlayerActionState
@@ -131,9 +136,9 @@ public class PlayerJabbingState : PlayerActionState
 		if (curAttack == attackSets[1] && command is JumpCommand) {
 			return new VoidCommand();
 		}
-		return command; 
+		return command;
 	}
-	
+
 	public override void Tick() {
 		if (curAttack.isFinished) {
 			FSM.ActionTransition(FSM.actionStates.Idle);
@@ -146,3 +151,24 @@ public class PlayerJabbingState : PlayerActionState
 	//}
 }
 
+public class PlayerAttenuateState : PlayerActionState
+{
+	public float attenuateEnterTime;
+	
+	public PlayerAttenuateState(PlayerStateMachine ctx) : base(ctx) { }
+	
+	public override void Enter() {
+		attenuateEnterTime = Time.time;
+		FSM.movementAllowed = false;
+	}
+	
+	public override void Exit() {
+		FSM.movementAllowed = true;
+	}
+	
+	public override void Tick() {
+		if (Time.time - attenuateEnterTime >= 1f) {
+			FSM.ActionTransition(FSM.actionStates.Idle);
+		}
+	}
+}

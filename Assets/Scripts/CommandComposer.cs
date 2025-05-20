@@ -23,3 +23,10 @@ public class JabCommand : Command
 		actionState.OnJabCommand();
 	}
 }
+
+public class AttenuateCommand : Command
+{
+	public void execute(PlayerMovementState movementState, PlayerActionState actionState) {
+		actionState.OnAttenuateCommand();
+	}
+}
