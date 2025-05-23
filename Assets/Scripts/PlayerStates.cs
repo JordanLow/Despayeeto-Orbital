@@ -90,11 +90,24 @@ public class PlayerAirborneState : PlayerMovementState
 			FSM.MovementTransition(FSM.movementStates.Grounded);
 		}
 	}
+	
+	public override Command FilterCommand(Command command) {
+		if (command is JumpCommand) {
+			return new VoidCommand();
+		}
+		return command;
+	}
 }
 
 public class PlayerIdleState : PlayerActionState
 {
+	public bool jabBuffer = false;
+	
 	public PlayerIdleState(PlayerStateMachine ctx) : base(ctx) { }
+	
+	public override void Enter() {
+		Debug.Log("Jab Buffer: " + jabBuffer);
+	}
 	
 	public override void OnJabCommand() {
 		FSM.ActionTransition(FSM.actionStates.Jabbing);
@@ -103,18 +116,24 @@ public class PlayerIdleState : PlayerActionState
 	public override void OnAttenuateCommand() {
 		FSM.ActionTransition(FSM.actionStates.Attenuate);
 	}
+	
+	public override void Tick() {
+		if (jabBuffer) {
+			jabBuffer = false;
+			FSM.ActionTransition(FSM.actionStates.Jabbing);
+		}
+	}
 }
 
 public class PlayerJabbingState : PlayerActionState
 {
 	public float jabEnterTime { get; private set; }
-	private bool followQueued = false;
 	private IAttackDelegate curAttack;
 	private IAttackDelegate[] attackSets;
 	private int qmode = 0;
 
 	public PlayerJabbingState(PlayerStateMachine ctx) : base(ctx) {
-		attackSets = new IAttackDelegate[2] { new RapidsDelegate(), new GentlemanDelegate() };
+		attackSets = new IAttackDelegate[2] { new BasicChainDelegate(), new GentlemanDelegate() };
 		curAttack = attackSets[0];
 	}
 	
@@ -124,31 +143,20 @@ public class PlayerJabbingState : PlayerActionState
 	
 	public override void Enter() {
 		jabEnterTime = Time.time;
-		followQueued = false;
+		FSM.actionStates.Idle.jabBuffer = false;
 		curAttack = attackSets[qmode];
 		curAttack.Execute(FSM);
 	}
 
-	public override Command FilterCommand(Command command) { 
-		// Decision tree pending refactor for elegance based on
-		// Representation of attacksets
-		// Right now lists and numbers are used for ease
-		if (curAttack == attackSets[1] && command is JumpCommand) {
-			return new VoidCommand();
-		}
-		return command;
+	public override void OnJabCommand() {
+		Debug.Log("Buffering Jab");
+		FSM.actionStates.Idle.jabBuffer = true;
 	}
 
-	public override void Tick() {
-		if (curAttack.isFinished) {
-			FSM.ActionTransition(FSM.actionStates.Idle);
-			curAttack = attackSets[qmode];
-		}
+	public override void OnJumpCommand() {
+		FSM.actionStates.Idle.jabBuffer = false;
+		FSM.animator.Play("Idle");
 	}
-
-	//public override OnJabCommand() {
-		
-	//}
 }
 
 public class PlayerAttenuateState : PlayerActionState
@@ -167,6 +175,7 @@ public class PlayerAttenuateState : PlayerActionState
 	}
 	
 	public override void Tick() {
+		// Also tie this to AnimationEvents
 		if (Time.time - attenuateEnterTime >= 1f) {
 			FSM.ActionTransition(FSM.actionStates.Idle);
 		}

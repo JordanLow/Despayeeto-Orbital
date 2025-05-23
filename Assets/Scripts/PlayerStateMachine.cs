@@ -80,7 +80,8 @@ public class PlayerStateMachine : MonoBehaviour
 		command.execute(this.currentMovement, this.currentAction);
 	}
 	
-	public void OnJab() {
+	public void OnJab(InputAction.CallbackContext context) {
+		if (!context.started) return;
 		Command command = new JabCommand();
 		command = this.currentMovement.FilterCommand(command);
 		command = this.currentAction.FilterCommand(command);
@@ -119,13 +120,12 @@ public class PlayerStateMachine : MonoBehaviour
 	
 	public Camera cam { get; private set; }
 	public CharacterController controller { get; private set; }
+	public Animator animator { get; private set; }
 	public Vector3 currentVelocity;
 	
 	[SerializeField] public float moveSpeed { get; } = 8f;
 	[SerializeField] public float jumpSpeed { get; } = 4f;
-	[SerializeField] public GameObject leftPunchPlaceholder;
-	[SerializeField] public GameObject rightPunchPlaceholder;
-	[SerializeField] public GameObject gentlemanPlaceholder;
+	[SerializeField] public PlayerAttackSet attackProfile;
 	
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -143,6 +143,7 @@ public class PlayerStateMachine : MonoBehaviour
 		this.currentVelocity = Vector3.zero;
 		this.cam = Camera.main;
 		this.controller = GetComponent<CharacterController>();
+		this.animator = GetComponent<Animator>();
 		this.MovementTransition(movementStates.Grounded);
 		this.ActionTransition(actionStates.Idle);
     }
