@@ -24,12 +24,15 @@ public class PlayerStateMachine : MonoBehaviour
 	public class ActionRegion {
 		public PlayerIdleState Idle { get; }
 		public PlayerJabbingState Jabbing { get; }
+		public PlayerAttenuateState Attenuate { get; }
 		
 		public ActionRegion(PlayerIdleState idleState,
-			PlayerJabbingState jabbingState) {
+			PlayerJabbingState jabbingState,
+			PlayerAttenuateState attenuateState) {
 			
 			this.Idle = idleState;
 			this.Jabbing = jabbingState;
+			this.Attenuate = attenuateState;
 		}
 	}
 	
@@ -41,8 +44,8 @@ public class PlayerStateMachine : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        this.currentMovement?.Tick();
 		this.currentAction?.Tick();
+        this.currentMovement?.Tick();
     }
 	
 	public void MovementTransition(PlayerMovementState newState) {
@@ -61,6 +64,7 @@ public class PlayerStateMachine : MonoBehaviour
 	
 	// Input Control
 	public Vector3 inputDirection;
+	public bool movementAllowed = true;
 	[SerializeField] GameObject offenseGearWheel;
 	
 	public void OnMove(InputAction.CallbackContext context) {
@@ -76,8 +80,16 @@ public class PlayerStateMachine : MonoBehaviour
 		command.execute(this.currentMovement, this.currentAction);
 	}
 	
-	public void OnJab() {
+	public void OnJab(InputAction.CallbackContext context) {
+		if (!context.started) return;
 		Command command = new JabCommand();
+		command = this.currentMovement.FilterCommand(command);
+		command = this.currentAction.FilterCommand(command);
+		command.execute(this.currentMovement, this.currentAction);
+	}
+	
+	public void OnAttenuate() {
+		Command command = new AttenuateCommand();
 		command = this.currentMovement.FilterCommand(command);
 		command = this.currentAction.FilterCommand(command);
 		command.execute(this.currentMovement, this.currentAction);
@@ -108,13 +120,12 @@ public class PlayerStateMachine : MonoBehaviour
 	
 	public Camera cam { get; private set; }
 	public CharacterController controller { get; private set; }
+	public Animator animator { get; private set; }
 	public Vector3 currentVelocity;
 	
 	[SerializeField] public float moveSpeed { get; } = 8f;
 	[SerializeField] public float jumpSpeed { get; } = 4f;
-	[SerializeField] public GameObject leftPunchPlaceholder;
-	[SerializeField] public GameObject rightPunchPlaceholder;
-	[SerializeField] public GameObject gentlemanPlaceholder;
+	[SerializeField] public PlayerAttackSet attackProfile;
 	
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -125,12 +136,14 @@ public class PlayerStateMachine : MonoBehaviour
 		);
 		this.actionStates = new ActionRegion(
 			new PlayerIdleState(this),
-			new PlayerJabbingState(this)
+			new PlayerJabbingState(this),
+			new PlayerAttenuateState(this)
 		);
 		this.inputDirection = Vector3.zero;
 		this.currentVelocity = Vector3.zero;
 		this.cam = Camera.main;
 		this.controller = GetComponent<CharacterController>();
+		this.animator = GetComponent<Animator>();
 		this.MovementTransition(movementStates.Grounded);
 		this.ActionTransition(actionStates.Idle);
     }

@@ -1,0 +1,8 @@
+using UnityEngine;
+
+[CreateAssetMenu(fileName = "PlayerAttackSet", menuName = "Scriptable Objects/PlayerAttackSet")]
+public class PlayerAttackSet : ScriptableObject
+{
+    public PlayerCombo jabCombo;
+	public PlayerAttack placeholderAttackLeaveNull;
+}
