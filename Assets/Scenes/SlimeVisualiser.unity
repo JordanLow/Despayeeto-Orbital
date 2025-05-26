@@ -267,7 +267,7 @@ GameObject:
   - component: {fileID: 142700090}
   - component: {fileID: 142700089}
   - component: {fileID: 142700088}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: FinisherHitbox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1323,7 +1323,7 @@ GameObject:
   - component: {fileID: 1517195606}
   - component: {fileID: 1517195605}
   - component: {fileID: 1517195604}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: RightHitbox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1939,7 +1939,7 @@ GameObject:
   - component: {fileID: 1836393346}
   - component: {fileID: 1836393345}
   - component: {fileID: 1836393344}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: LeftHitbox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2614,7 +2614,7 @@ GameObject:
   - component: {fileID: 1995829791}
   - component: {fileID: 1995829792}
   - component: {fileID: 1995829793}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2728,7 +2728,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8170018956334759539}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Player Skeleton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2744,7 +2744,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4804408305934646493}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Spine
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2776,7 +2776,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7930882028656208122}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Squish Bone_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2873,7 +2873,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 307440944731036735}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Squish Bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2890,7 +2890,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8044285975049003211}
   - component: {fileID: 6904205821982738277}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Player Membrane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3118,7 +3118,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8534023618217014461}
   - component: {fileID: 9046051502465031121}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Player Core
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3328,7 +3328,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 584314027538515725}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Spine_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
