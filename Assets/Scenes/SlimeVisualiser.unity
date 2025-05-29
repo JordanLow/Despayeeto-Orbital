@@ -384,8 +384,8 @@ MonoBehaviour:
     m_ActionName: 'Player/GearSelect[/Mouse/delta]'
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 847430502}
-        m_TargetAssemblyTypeName: ConsumeBruteForcer, Assembly-CSharp
+      - m_Target: {fileID: 816813961}
+        m_TargetAssemblyTypeName: PlayerStateMachine, Assembly-CSharp
         m_MethodName: OnConsume
         m_Mode: 1
         m_Arguments:
@@ -1654,8 +1654,8 @@ MonoBehaviour:
   Radius: 10
   Orbits:
     Top:
-      Radius: 1
-      Height: 2
+      Radius: 2.5
+      Height: 3
     Center:
       Radius: 2
       Height: 0
@@ -2200,7 +2200,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5450894090966591475}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Spine
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2215,7 +2215,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 919132149023883631}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: 0.026518459, z: -0, w: 0.99964833}
   m_LocalPosition: {x: -0.43877402, y: 0.00000047683716, z: -2.509079}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2224,7 +2224,7 @@ Transform:
   - {fileID: 8044285973745299182}
   - {fileID: 8170018955357286486}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 3.039, z: 0}
 --- !u!4 &543450653711908645
 Transform:
   m_ObjectHideFlags: 0
@@ -2363,7 +2363,7 @@ GameObject:
   - component: {fileID: 919132149184193952}
   - component: {fileID: 919132149184193955}
   - component: {fileID: 919132149184193954}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Radical_Slime
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2665,7 +2665,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6214243759881428175}
   - component: {fileID: 6448945699510029457}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Radical Slime Membrane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2775,7 +2775,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5915194045556748994}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Radical Slime Skeleton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2824,7 +2824,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3353362560428759541}
   - component: {fileID: 8896944448478137543}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Radical Slime Core
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2937,7 +2937,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6693077093640618868}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Squish Bone_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3153,7 +3153,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2498754496712003771}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Squish Bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3328,7 +3328,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1325241276798246812}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Spine_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}

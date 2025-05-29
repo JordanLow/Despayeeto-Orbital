@@ -53,22 +53,27 @@ public abstract class PlayerActionState : PlayerState
 public class PlayerGroundedState : PlayerMovementState
 {
 	public PlayerGroundedState(PlayerStateMachine ctx) : base(ctx) { }
-	
-	public override void Enter() {
-		
-	}
 
 	public override void Tick() {
 		base.Tick();
 		if (!Physics.CheckSphere(FSM.transform.position, 0.1f, LayerMask.GetMask("Ground"))) {
 		//if (!FSM.controller.isGrounded) {
 			FSM.MovementTransition(FSM.movementStates.Airborne);
+			FSM.animator.SetBool("GroundedMoving", false);
+		} else {
+			Vector3 planarVelo = FSM.currentVelocity;
+			planarVelo.y = 0;
+			if (planarVelo.magnitude >= 0.2f) {
+				FSM.animator.SetBool("GroundedMoving", true);
+			} else {
+				FSM.animator.SetBool("GroundedMoving", false);
+			}
 		}
 	}
 
 	public override void OnJumpCommand() {
 		FSM.currentVelocity.y = FSM.jumpSpeed;
-		//FSM.MovementTransition(FSM.movementStates.Airborne);
+		FSM.animator.Play("Bounce");
 	}
 }
 
@@ -88,6 +93,7 @@ public class PlayerAirborneState : PlayerMovementState
 		//if (FSM.controller.isGrounded
 		&& Time.time - jumpEnterTime > minimumAirborneTime) {
 			FSM.MovementTransition(FSM.movementStates.Grounded);
+			FSM.animator.Play("Land");
 		}
 	}
 	
@@ -142,6 +148,13 @@ public class PlayerJabbingState : PlayerActionState
 	}
 	
 	public override void Enter() {
+		// Snap to nearest enemy
+		Collider[] hits = Physics.OverlapSphere(FSM.transform.position, 1.6f, LayerMask.GetMask("Enemy"));
+		if (hits.Length >= 1) {
+			Vector3 enemyDir = hits[0].transform.position - FSM.transform.position;
+			FSM.transform.rotation = Quaternion.LookRotation(enemyDir);
+			FSM.controller.Move(enemyDir * Mathf.Max(0, enemyDir.magnitude - 1.3f));
+		}
 		jabEnterTime = Time.time;
 		FSM.actionStates.Idle.jabBuffer = false;
 		curAttack = attackSets[qmode];
