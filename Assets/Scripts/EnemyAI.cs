@@ -34,6 +34,7 @@ public class EnemyAI : MonoBehaviour
 	{
 		RaycastHit hit;
 		bool isGrounded = Physics.Raycast(transform.position, Vector3.down, out hit, 0.1f, LayerMask.GetMask("Ground"));
+		bool withinRing = false;
 		if (state == State.Wandering) {
 			Collider[] hits = Physics.OverlapSphere(transform.position, 3f, LayerMask.GetMask("Player"));
 			if (hits.Length > 0)
@@ -51,12 +52,18 @@ public class EnemyAI : MonoBehaviour
 				Debug.Log("Player lost");
 				state = State.Wandering;
 				GetAimlessDestination();
-			} else if (curLimit >= rLimit) {
-				PathfindToPlayer(hits[0].transform);
-				curLimit = 0f;
-				Debug.Log("Pathing to " + hits[0].transform.position);
 			} else {
-				curLimit += Time.fixedDeltaTime;
+				if (Vector3.Distance(transform.position, hits[0].transform.position) <= 0.9f) {
+					withinRing = true;
+				}
+				if (curLimit >= rLimit) {
+					Debug.Log(Vector3.Distance(transform.position, hits[0].transform.position));
+					PathfindToPlayer(hits[0].transform);
+					curLimit = 0f;
+					//Debug.Log("Pathing to " + hits[0].transform.position);
+				} else {
+					curLimit += Time.fixedDeltaTime;
+				}
 			}
 		}
 		if (path != null && pathIdx < path.corners.Length) {
@@ -66,6 +73,7 @@ public class EnemyAI : MonoBehaviour
 				pathIdx++;
 			} else {
 				Vector3 move = dir.normalized * speed;
+				if (withinRing) move = Vector3.zero;
 				velocity.x = move.x;
 				velocity.z = move.z;
 			}
@@ -102,7 +110,6 @@ public class EnemyAI : MonoBehaviour
 		for (int i = 0; i < 10; i++) {
 			if (NavMesh.SamplePosition(player.position, out NavMeshHit hit, 2f, NavMesh.AllAreas)) {
 				NavMesh.CalculatePath(transform.position, hit.position, NavMesh.AllAreas, path);
-				Debug.Log(player.transform.position);
 				pathIdx = 0;
 				return;
 			}
