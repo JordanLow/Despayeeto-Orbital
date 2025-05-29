@@ -36,7 +36,7 @@ public class EnemyAI : MonoBehaviour
 		bool isGrounded = Physics.Raycast(transform.position, Vector3.down, out hit, 0.1f, LayerMask.GetMask("Ground"));
 		bool withinRing = false;
 		if (state == State.Wandering) {
-			Collider[] hits = Physics.OverlapSphere(transform.position, 3f, LayerMask.GetMask("Player"));
+			Collider[] hits = Physics.OverlapSphere(transform.position, 4f, LayerMask.GetMask("Player"));
 			if (hits.Length > 0)
 			{
 				Debug.Log("Player Detected");
@@ -46,14 +46,14 @@ public class EnemyAI : MonoBehaviour
 				PathfindToPlayer(nearestPlayer);
 			}
 		} else if (state == State.Chasing) {
-			Collider[] hits = Physics.OverlapSphere(transform.position, 3f, LayerMask.GetMask("Player"));
+			Collider[] hits = Physics.OverlapSphere(transform.position, 4f, LayerMask.GetMask("Player"));
 			if (hits.Length <= 0)
 			{
 				Debug.Log("Player lost");
 				state = State.Wandering;
 				GetAimlessDestination();
 			} else {
-				if (Vector3.Distance(transform.position, hits[0].transform.position) <= 0.9f) {
+				if (Vector3.Distance(VectorYNormalize(transform.position), VectorYNormalize(hits[0].transform.position)) <= 1.4f) {
 					withinRing = true;
 				}
 				if (curLimit >= rLimit) {
@@ -114,5 +114,9 @@ public class EnemyAI : MonoBehaviour
 				return;
 			}
 		}
+	}
+	
+	private Vector2 VectorYNormalize(Vector3 v3) {
+		return new Vector2(v3.x, v3.z);
 	}
 }

@@ -95,6 +95,10 @@ public class PlayerStateMachine : MonoBehaviour
 		command.execute(this.currentMovement, this.currentAction);
 	}
 	
+	public void OnConsume() {
+		animator.Play("Consume");
+	}
+	
 	public void OnGearWheel(InputAction.CallbackContext context) { //Just for offense for now
 		if (context.started) {
 			Time.timeScale = 0.3f;
