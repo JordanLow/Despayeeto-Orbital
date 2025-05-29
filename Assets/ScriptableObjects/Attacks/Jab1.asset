@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 25ca0a88e04108149b49568109a50f0a, type: 3}
   m_Name: Jab1
   m_EditorClassIdentifier: 
-  animationClip: {fileID: 7400000, guid: c3f3b0d62b019354e82d5c41fbdee1a9, type: 2}
+  animationClip: {fileID: 7400000, guid: d3011773fb89a324ca70fb7327d52d73, type: 2}
   damage: 5
   attackName: Jab1
