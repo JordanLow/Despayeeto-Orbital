@@ -74,11 +74,13 @@ public class PlayerStateMachine : MonoBehaviour
 	}
 	
 	public void OnJump() {
-		Debug.Log("Jumpin'");
 		Command command = new JumpCommand();
 		command = this.currentMovement.FilterCommand(command);
 		command = this.currentAction.FilterCommand(command);
 		command.execute(this.currentMovement, this.currentAction);
+	}
+	public void JumpHelper() {
+		currentVelocity.y = jumpSpeed;
 	}
 	
 	public void OnJab(InputAction.CallbackContext context) {

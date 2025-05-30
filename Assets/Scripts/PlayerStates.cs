@@ -53,11 +53,13 @@ public abstract class PlayerActionState : PlayerState
 public class PlayerGroundedState : PlayerMovementState
 {
 	public PlayerGroundedState(PlayerStateMachine ctx) : base(ctx) { }
+	private bool isJumping = false;
 
 	public override void Tick() {
 		base.Tick();
 		if (!Physics.CheckSphere(FSM.transform.position, 0.1f, LayerMask.GetMask("Ground"))) {
 		//if (!FSM.controller.isGrounded) {
+			isJumping = false;
 			FSM.MovementTransition(FSM.movementStates.Airborne);
 			FSM.animator.SetBool("GroundedMoving", false);
 		} else {
@@ -72,8 +74,9 @@ public class PlayerGroundedState : PlayerMovementState
 	}
 
 	public override void OnJumpCommand() {
-		FSM.currentVelocity.y = FSM.jumpSpeed;
-		FSM.animator.Play("Bounce");
+		if (isJumping) return;
+		isJumping = true;
+		FSM.animator.Play("BounceSquish");
 	}
 }
 
@@ -169,7 +172,6 @@ public class PlayerJabbingState : PlayerActionState
 
 	public override void OnJumpCommand() {
 		FSM.actionStates.Idle.jabBuffer = false;
-		FSM.animator.Play("Idle");
 	}
 }
 
