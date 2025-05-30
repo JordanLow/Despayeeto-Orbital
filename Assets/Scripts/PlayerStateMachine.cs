@@ -43,7 +43,7 @@ public class PlayerStateMachine : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {
+    {		
 		this.currentAction?.Tick();
         this.currentMovement?.Tick();
     }
@@ -74,6 +74,7 @@ public class PlayerStateMachine : MonoBehaviour
 	}
 	
 	public void OnJump() {
+		Debug.Log("Jumpin'");
 		Command command = new JumpCommand();
 		command = this.currentMovement.FilterCommand(command);
 		command = this.currentAction.FilterCommand(command);
@@ -150,5 +151,8 @@ public class PlayerStateMachine : MonoBehaviour
 		this.animator = GetComponent<Animator>();
 		this.MovementTransition(movementStates.Grounded);
 		this.ActionTransition(actionStates.Idle);
+		
+		Cursor.visible = false;
+		Cursor.lockState = CursorLockMode.Locked;
     }
 }

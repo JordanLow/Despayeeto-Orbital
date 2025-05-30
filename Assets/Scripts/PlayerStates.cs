@@ -152,6 +152,7 @@ public class PlayerJabbingState : PlayerActionState
 		Collider[] hits = Physics.OverlapSphere(FSM.transform.position, 1.6f, LayerMask.GetMask("Enemy"));
 		if (hits.Length >= 1) {
 			Vector3 enemyDir = hits[0].transform.position - FSM.transform.position;
+			enemyDir.y = 0;
 			FSM.transform.rotation = Quaternion.LookRotation(enemyDir);
 			FSM.controller.Move(enemyDir * Mathf.Max(0, enemyDir.magnitude - 1.3f));
 		}
