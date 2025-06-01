@@ -9,11 +9,15 @@ public class EnemyAI : MonoBehaviour
 	private NavMeshPath path;
 	private int pathIdx;
 	private Vector3 velocity;
+	private Animator animator;
+	
+	[SerializeField] private float HP = 20f;
 	
 	private enum State {
 		Wandering,
 		Chasing,
-		Bounded
+		Bounded,
+		Dead
 	}
 	
 	private State state;
@@ -23,6 +27,7 @@ public class EnemyAI : MonoBehaviour
 	void Start()
 	{
 		rb = GetComponent<Rigidbody>();
+		animator = GetComponent<Animator>();
 		rb.constraints = RigidbodyConstraints.FreezeRotation;
 		path = new NavMeshPath();
 		velocity = Vector3.zero;
@@ -33,7 +38,12 @@ public class EnemyAI : MonoBehaviour
 
     void FixedUpdate()
 	{
-		if (state == State.Bounded) {
+		if (HP <= 0f) {
+			state = State.Dead;
+			animator.Play("Deflate");
+			rb.detectCollisions = false;
+		}
+		if (state == State.Bounded || state == State.Dead) {
 			return;
 		}
 		RaycastHit hit;
@@ -126,5 +136,13 @@ public class EnemyAI : MonoBehaviour
 	public void SetBound(bool setTo) {
 		state = setTo ? State.Bounded : State.Wandering;
 		Debug.Log("Enemy State: " + state);
+	}
+	
+	public void takeDamage(float dmg) {
+		HP -= dmg;
+	}
+	
+	public void attemptConsume() {
+		if (HP <= 10f) Destroy(gameObject);
 	}
 }

@@ -20,8 +20,12 @@ public class AttackStateRider : StateMachineBehaviour
 		PlayerStateMachine FSM = animator.GetComponent<PlayerStateMachine>();
         if (FSM != null)
         {
-            FSM.ActionTransition(FSM.actionStates.Idle);
-        }
+			if (FSM.animationCancelled) {
+				FSM.animationCancelled = false;
+			} else {
+				FSM.ActionTransition(FSM.actionStates.Idle);
+			}
+		}
     }
 
     // OnStateMove is called right after Animator.OnAnimatorMove()

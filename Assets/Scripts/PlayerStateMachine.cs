@@ -29,16 +29,19 @@ public class PlayerStateMachine : MonoBehaviour
 		public PlayerJabbingState Jabbing { get; }
 		public PlayerAttenuateState Attenuate { get; }
 		public PlayerBoundingState Bounding { get; }
+		public PlayerConsumingState Consuming { get; }
 		
 		public ActionRegion(PlayerIdleState idleState,
 			PlayerJabbingState jabbingState,
 			PlayerAttenuateState attenuateState,
-			PlayerBoundingState boundingState) {
+			PlayerBoundingState boundingState,
+			PlayerConsumingState consumingState) {
 			
 			this.Idle = idleState;
 			this.Jabbing = jabbingState;
 			this.Attenuate = attenuateState;
 			this.Bounding = boundingState;
+			this.Consuming = consumingState;
 		}
 	}
 	
@@ -49,7 +52,8 @@ public class PlayerStateMachine : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {		
+    {
+		if (HP <= 0) return;
 		this.currentAction?.Tick();
         this.currentMovement?.Tick();
     }
@@ -100,6 +104,7 @@ public class PlayerStateMachine : MonoBehaviour
 	
 	public void OnAttenuate(InputAction.CallbackContext context) {
 		if (!context.started) return;
+		if (Time.time - actionStates.Attenuate.lastExit <= 2f) return;
 		Command command = new AttenuateCommand();
 		command = this.currentMovement.FilterCommand(command);
 		command = this.currentAction.FilterCommand(command);
@@ -107,7 +112,11 @@ public class PlayerStateMachine : MonoBehaviour
 	}
 	
 	public void OnConsume(InputAction.CallbackContext context) {
-		animator.Play("Consume");
+		if (!context.started) return;
+		Command command = new ConsumeCommand();
+		command = this.currentMovement.FilterCommand(command);
+		command = this.currentAction.FilterCommand(command);
+		command.execute(this.currentMovement, this.currentAction);
 	}
 	
 	public void OnGearWheel(InputAction.CallbackContext context) { //Just for offense for now
@@ -138,9 +147,13 @@ public class PlayerStateMachine : MonoBehaviour
 	public Animator animator { get; private set; }
 	public Vector3 currentVelocity;
 	
+	public bool animationCancelled = false;
+	
 	[SerializeField] public float moveSpeed { get; } = 8f;
 	[SerializeField] public float jumpSpeed { get; } = 4f;
 	[SerializeField] public PlayerAttackSet attackProfile;
+	
+	[SerializeField] private float HP = 50f;
 	
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -154,7 +167,8 @@ public class PlayerStateMachine : MonoBehaviour
 			new PlayerIdleState(this),
 			new PlayerJabbingState(this),
 			new PlayerAttenuateState(this),
-			new PlayerBoundingState(this)
+			new PlayerBoundingState(this),
+			new PlayerConsumingState(this)
 		);
 		this.inputDirection = Vector3.zero;
 		this.currentVelocity = Vector3.zero;
