@@ -141,7 +141,7 @@ public class PlayerBoundState : PlayerMovementState
 	
 	public override void Enter() {
 		dest = boundedEnemy.transform.position;
-		dest.y += 0.45f;
+		dest.y += boundedEnemy.heightOffset;
 		atEnemy = false;
 		Physics.IgnoreCollision(FSM.controller, boundedEnemy.GetComponent<Collider>());
 	}

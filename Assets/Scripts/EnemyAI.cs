@@ -7,7 +7,7 @@ public class EnemyAI : MonoBehaviour
 {
 	[SerializeField] private float speed;
 	
-    private Rigidbody rb;
+    protected Rigidbody rb;
 	private NavMeshPath path;
 	private int pathIdx;
 	private Vector3 velocity;
@@ -15,6 +15,7 @@ public class EnemyAI : MonoBehaviour
 	
 	[SerializeField] private float HP = 20f;
 	[SerializeField] private float Devourable = 10f;
+	[SerializeField] public float heightOffset = 0.45f;
 	
 	private enum State {
 		Wandering,
@@ -41,9 +42,8 @@ public class EnemyAI : MonoBehaviour
 		GetAimlessDestination();
 	}
 
-    void FixedUpdate()
+    protected virtual void FixedUpdate()
 	{
-		Debug.Log(state);
 		if (state == State.Bounded || state == State.Attacking) {
 			return;
 		}
@@ -150,12 +150,17 @@ public class EnemyAI : MonoBehaviour
 		return new Vector2(v3.x, v3.z);
 	}
 	
-	public void AnimationEndHelper() {
+	public virtual void AnimationEndHelper() {
 		state = State.Wandering;
 	}
 	
-	public void SetBound(bool setTo) {
-		state = setTo ? State.Bounded : State.Wandering;
+	public virtual void SetBound(bool setTo) {
+		if (setTo && state == State.Attacking) {
+			animator.Play("EmptyAnimanim");
+			state = State.Bounded;
+			return;
+		}
+ 		state = setTo ? State.Bounded : State.Wandering;
 		Debug.Log("Enemy State: " + state);
 	}
 	
