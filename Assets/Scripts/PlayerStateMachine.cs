@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Unity.Cinemachine;
+using UnityEngine.UI;
 
 public class PlayerStateMachine : MonoBehaviour
 {
@@ -53,7 +54,12 @@ public class PlayerStateMachine : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-		if (HP <= 0) return;
+		if (HP <= 0) {
+			hpFillImg.rectTransform.localScale = new Vector3(0, 1, 1);
+			return;
+		} else {
+			hpFillImg.rectTransform.localScale = new Vector3(Mathf.Clamp01(HP / maxHP), 1, 1);
+		}
 		this.currentAction?.Tick();
         this.currentMovement?.Tick();
     }
@@ -149,11 +155,13 @@ public class PlayerStateMachine : MonoBehaviour
 	
 	public bool animationCancelled = false;
 	
-	[SerializeField] public float moveSpeed { get; } = 8f;
-	[SerializeField] public float jumpSpeed { get; } = 4f;
+	[SerializeField] public float moveSpeed = 8f;
+	[SerializeField] public float jumpSpeed = 4f;
 	[SerializeField] public PlayerAttackSet attackProfile;
+	[SerializeField] private Image hpFillImg;
 	
 	[SerializeField] private float maxHP = 50f;
+	[SerializeField] private float healAmt = 50f;
 	private float HP;
 	
 	// Maybe move this stuff in a separate script if it gets too clunky
@@ -167,7 +175,7 @@ public class PlayerStateMachine : MonoBehaviour
 		}
 	}
 	public void BasicHeal() {
-		HP = maxHP;
+		HP += healAmt;
 	}
 	
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -192,7 +200,7 @@ public class PlayerStateMachine : MonoBehaviour
 		this.animator = GetComponent<Animator>();
 		this.MovementTransition(movementStates.Grounded);
 		this.ActionTransition(actionStates.Idle);
-		HP = maxHP;
+		HP += maxHP;
 		
 		Cursor.visible = false;
 		Cursor.lockState = CursorLockMode.Locked;
