@@ -1,5 +1,7 @@
 using UnityEngine;
 
+// I wish C# was a functional language...
+
 public interface Command
 {
 	public abstract void execute(PlayerMovementState movementState, PlayerActionState actionState);
@@ -31,5 +33,21 @@ public class AttenuateCommand : Command
 	public void execute(PlayerMovementState movementState, PlayerActionState actionState) {
 		movementState.OnAttenuateCommand();
 		actionState.OnAttenuateCommand();
+	}
+}
+
+public class BoundCommand : Command
+{
+	public void execute(PlayerMovementState movementState, PlayerActionState actionState) {
+		movementState.OnBoundCommand();
+		actionState.OnBoundCommand();
+	}
+}
+
+public class ConsumeCommand : Command
+{
+	public void execute(PlayerMovementState movementState, PlayerActionState actionState) {
+		movementState.OnConsumeCommand();
+		actionState.OnConsumeCommand();
 	}
 }
