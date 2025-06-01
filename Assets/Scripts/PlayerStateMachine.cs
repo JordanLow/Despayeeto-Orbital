@@ -110,7 +110,7 @@ public class PlayerStateMachine : MonoBehaviour
 	
 	public void OnAttenuate(InputAction.CallbackContext context) {
 		if (!context.started) return;
-		if (Time.time - actionStates.Attenuate.lastExit <= 2f) return;
+		if (Time.time - actionStates.Attenuate.lastExit <= 1f) return;
 		Command command = new AttenuateCommand();
 		command = this.currentMovement.FilterCommand(command);
 		command = this.currentAction.FilterCommand(command);
