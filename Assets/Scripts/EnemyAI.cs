@@ -12,7 +12,8 @@ public class EnemyAI : MonoBehaviour
 	
 	private enum State {
 		Wandering,
-		Chasing
+		Chasing,
+		Bounded
 	}
 	
 	private State state;
@@ -32,14 +33,16 @@ public class EnemyAI : MonoBehaviour
 
     void FixedUpdate()
 	{
+		if (state == State.Bounded) {
+			return;
+		}
 		RaycastHit hit;
 		bool isGrounded = Physics.Raycast(transform.position, Vector3.down, out hit, 0.1f, LayerMask.GetMask("Ground"));
 		bool withinRing = false;
 		if (state == State.Wandering) {
 			Collider[] hits = Physics.OverlapSphere(transform.position, 4f, LayerMask.GetMask("Player"));
-			if (hits.Length > 0)
-			{
-				Debug.Log("Player Detected");
+			if (hits.Length > 0) {
+				//Debug.Log("Player Detected");
 				Transform nearestPlayer = hits[0].transform;
 				state = State.Chasing;
 				curLimit = 0f;
@@ -47,8 +50,7 @@ public class EnemyAI : MonoBehaviour
 			}
 		} else if (state == State.Chasing) {
 			Collider[] hits = Physics.OverlapSphere(transform.position, 4f, LayerMask.GetMask("Player"));
-			if (hits.Length <= 0)
-			{
+			if (hits.Length <= 0) {
 				Debug.Log("Player lost");
 				state = State.Wandering;
 				GetAimlessDestination();
@@ -76,8 +78,10 @@ public class EnemyAI : MonoBehaviour
 				velocity.x = move.x;
 				velocity.z = move.z;
 			}
-			Quaternion targetRotation = Quaternion.LookRotation(dir);
-			rb.MoveRotation(targetRotation);
+			if (dir != Vector3.zero) {
+				Quaternion targetRotation = Quaternion.LookRotation(dir);
+				rb.MoveRotation(targetRotation);
+			}
 		} else {
 			velocity.x = 0;
 			velocity.z = 0;
@@ -117,5 +121,10 @@ public class EnemyAI : MonoBehaviour
 	
 	private Vector2 VectorYNormalize(Vector3 v3) {
 		return new Vector2(v3.x, v3.z);
+	}
+	
+	public void SetBound(bool setTo) {
+		state = setTo ? State.Bounded : State.Wandering;
+		Debug.Log("Enemy State: " + state);
 	}
 }

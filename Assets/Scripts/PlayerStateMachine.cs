@@ -12,12 +12,15 @@ public class PlayerStateMachine : MonoBehaviour
 	public class MovementRegion {
 		public PlayerGroundedState Grounded { get; }
 		public PlayerAirborneState Airborne { get; }
+		public PlayerBoundState Bound { get; }
 		
 		public MovementRegion(PlayerGroundedState groundedState, 
-			PlayerAirborneState airborneState) {
+			PlayerAirborneState airborneState,
+			PlayerBoundState boundState) {
 			
 			this.Grounded = groundedState;
 			this.Airborne = airborneState;
+			this.Bound = boundState;
 		}
 	}
 	
@@ -25,14 +28,17 @@ public class PlayerStateMachine : MonoBehaviour
 		public PlayerIdleState Idle { get; }
 		public PlayerJabbingState Jabbing { get; }
 		public PlayerAttenuateState Attenuate { get; }
+		public PlayerBoundingState Bounding { get; }
 		
 		public ActionRegion(PlayerIdleState idleState,
 			PlayerJabbingState jabbingState,
-			PlayerAttenuateState attenuateState) {
+			PlayerAttenuateState attenuateState,
+			PlayerBoundingState boundingState) {
 			
 			this.Idle = idleState;
 			this.Jabbing = jabbingState;
 			this.Attenuate = attenuateState;
+			this.Bounding = boundingState;
 		}
 	}
 	
@@ -73,7 +79,8 @@ public class PlayerStateMachine : MonoBehaviour
 		this.inputDirection.z = direction.y;
 	}
 	
-	public void OnJump() {
+	public void OnJump(InputAction.CallbackContext context) {
+		if (!context.started) return;
 		Command command = new JumpCommand();
 		command = this.currentMovement.FilterCommand(command);
 		command = this.currentAction.FilterCommand(command);
@@ -91,14 +98,15 @@ public class PlayerStateMachine : MonoBehaviour
 		command.execute(this.currentMovement, this.currentAction);
 	}
 	
-	public void OnAttenuate() {
+	public void OnAttenuate(InputAction.CallbackContext context) {
+		if (!context.started) return;
 		Command command = new AttenuateCommand();
 		command = this.currentMovement.FilterCommand(command);
 		command = this.currentAction.FilterCommand(command);
 		command.execute(this.currentMovement, this.currentAction);
 	}
 	
-	public void OnConsume() {
+	public void OnConsume(InputAction.CallbackContext context) {
 		animator.Play("Consume");
 	}
 	
@@ -139,12 +147,14 @@ public class PlayerStateMachine : MonoBehaviour
     {
         this.movementStates = new MovementRegion(
 			new PlayerGroundedState(this),
-			new PlayerAirborneState(this)
+			new PlayerAirborneState(this),
+			new PlayerBoundState(this)
 		);
 		this.actionStates = new ActionRegion(
 			new PlayerIdleState(this),
 			new PlayerJabbingState(this),
-			new PlayerAttenuateState(this)
+			new PlayerAttenuateState(this),
+			new PlayerBoundingState(this)
 		);
 		this.inputDirection = Vector3.zero;
 		this.currentVelocity = Vector3.zero;
