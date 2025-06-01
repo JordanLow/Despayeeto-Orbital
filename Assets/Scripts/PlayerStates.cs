@@ -53,11 +53,13 @@ public abstract class PlayerActionState : PlayerState
 public class PlayerGroundedState : PlayerMovementState
 {
 	public PlayerGroundedState(PlayerStateMachine ctx) : base(ctx) { }
+	private bool isJumping = false;
 
 	public override void Tick() {
 		base.Tick();
 		if (!Physics.CheckSphere(FSM.transform.position, 0.1f, LayerMask.GetMask("Ground"))) {
 		//if (!FSM.controller.isGrounded) {
+			isJumping = false;
 			FSM.MovementTransition(FSM.movementStates.Airborne);
 			FSM.animator.SetBool("GroundedMoving", false);
 		} else {
@@ -72,8 +74,9 @@ public class PlayerGroundedState : PlayerMovementState
 	}
 
 	public override void OnJumpCommand() {
-		FSM.currentVelocity.y = FSM.jumpSpeed;
-		FSM.animator.Play("Bounce");
+		if (isJumping) return;
+		isJumping = true;
+		FSM.animator.Play("BounceSquish");
 	}
 }
 
@@ -152,6 +155,7 @@ public class PlayerJabbingState : PlayerActionState
 		Collider[] hits = Physics.OverlapSphere(FSM.transform.position, 1.6f, LayerMask.GetMask("Enemy"));
 		if (hits.Length >= 1) {
 			Vector3 enemyDir = hits[0].transform.position - FSM.transform.position;
+			enemyDir.y = 0;
 			FSM.transform.rotation = Quaternion.LookRotation(enemyDir);
 			FSM.controller.Move(enemyDir * Mathf.Max(0, enemyDir.magnitude - 1.3f));
 		}
@@ -168,7 +172,6 @@ public class PlayerJabbingState : PlayerActionState
 
 	public override void OnJumpCommand() {
 		FSM.actionStates.Idle.jabBuffer = false;
-		FSM.animator.Play("Idle");
 	}
 }
 

@@ -127,11 +127,33 @@
                 },
                 {
                     "name": "",
+                    "id": "0f317d79-ba5e-4b2f-9f59-de0eab0e2cf1",
+                    "path": "<Gamepad>/leftStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Controller",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "a54c003c-316e-491f-ac52-050ae42e27ce",
                     "path": "<Keyboard>/space",
                     "interactions": "",
                     "processors": "",
                     "groups": ";MnK",
+                    "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "5375b8e2-9cb8-435f-8380-c70064fac01b",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Controller",
                     "action": "Jump",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -149,6 +171,17 @@
                 },
                 {
                     "name": "",
+                    "id": "d5095f24-a78c-4c96-ac25-1b7d3f0679a4",
+                    "path": "<Gamepad>/buttonWest",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Controller",
+                    "action": "Jab",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "3832bd16-6388-44d2-9226-87693e3ba65a",
                     "path": "<Keyboard>/e",
                     "interactions": "Hold",
@@ -160,11 +193,11 @@
                 },
                 {
                     "name": "",
-                    "id": "5574fc7c-358d-4a3f-8327-2914ce85765a",
-                    "path": "<Keyboard>/q",
+                    "id": "c4f2eb38-a51a-472b-9248-61d2364572c1",
+                    "path": "<Gamepad>/leftShoulder",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";Controller",
                     "action": "GearWheel",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -182,6 +215,17 @@
                 },
                 {
                     "name": "",
+                    "id": "e2b306ad-29c9-4c70-bd97-18e62532b2ca",
+                    "path": "<Gamepad>/rightStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Controller",
+                    "action": "GearSelect",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "95b17802-93f2-4de9-b65d-e8e976df02ac",
                     "path": "<Keyboard>/f",
                     "interactions": "",
@@ -193,11 +237,33 @@
                 },
                 {
                     "name": "",
+                    "id": "6cb12f56-115e-4a03-a5a3-81f3d8a02f94",
+                    "path": "<Gamepad>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Controller",
+                    "action": "Consume",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "2c996703-609b-488f-95ff-40e66541ff22",
                     "path": "<Mouse>/rightButton",
                     "interactions": "",
                     "processors": "",
                     "groups": ";MnK",
+                    "action": "Attenuate",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "895fc553-098d-4d1f-aabe-13af604b3f87",
+                    "path": "<Gamepad>/buttonNorth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Controller",
                     "action": "Attenuate",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -217,6 +283,17 @@
                 },
                 {
                     "devicePath": "<Mouse>",
+                    "isOptional": false,
+                    "isOR": false
+                }
+            ]
+        },
+        {
+            "name": "Controller",
+            "bindingGroup": "Controller",
+            "devices": [
+                {
+                    "devicePath": "<Gamepad>",
                     "isOptional": false,
                     "isOR": false
                 }

@@ -57,7 +57,6 @@ public class EnemyAI : MonoBehaviour
 					withinRing = true;
 				}
 				if (curLimit >= rLimit) {
-					Debug.Log(Vector3.Distance(transform.position, hits[0].transform.position));
 					PathfindToPlayer(hits[0].transform);
 					curLimit = 0f;
 					//Debug.Log("Pathing to " + hits[0].transform.position);
