@@ -116,9 +116,11 @@ public class PlayerAirborneState : PlayerMovementState
 	public override void OnBoundCommand() {
 		Collider[] hits = Physics.OverlapSphere(FSM.transform.position, 3f, LayerMask.GetMask("Enemy"));
 		if (hits.Length > 0) {
+			Debug.Log("Bounding");
 			FSM.movementStates.Bound.boundedEnemy = hits[0].GetComponent<EnemyAI>();
 			FSM.actionStates.Bounding.boundedEnemy = hits[0].GetComponent<EnemyAI>();
 			FSM.MovementTransition(FSM.movementStates.Bound);
+			FSM.ActionTransition(FSM.actionStates.Bounding);
 			FSM.movementStates.Bound.boundedEnemy.SetBound(true);
 		}
 	}
@@ -144,6 +146,10 @@ public class PlayerBoundState : PlayerMovementState
 		dest.y += boundedEnemy.heightOffset;
 		atEnemy = false;
 		Physics.IgnoreCollision(FSM.controller, boundedEnemy.GetComponent<Collider>());
+	}
+	
+	public override void Exit() {
+		boundedEnemy = null;
 	}
 	
 	public override void Tick() {
@@ -185,10 +191,6 @@ public class PlayerIdleState : PlayerActionState
 		FSM.ActionTransition(FSM.actionStates.Consuming);
 	}
 	
-	public override void OnBoundCommand() {
-		FSM.ActionTransition(FSM.actionStates.Bounding);
-	}
-	
 	public override void Tick() {
 		if (jabBuffer) {
 			jabBuffer = false;
@@ -225,11 +227,13 @@ public class PlayerJabbingState : PlayerActionState
 		jabEnterTime = Time.time;
 		FSM.actionStates.Idle.jabBuffer = false;
 		curAttack = attackSets[qmode];
+		Debug.Log("Movement Locked");
 		FSM.movementAllowed = false;
 		curAttack.Execute(FSM);
 	}
 	
 	public override void Exit() {
+		Debug.Log("Movement regained");
 		FSM.movementAllowed = true;
 	}
 
@@ -238,8 +242,9 @@ public class PlayerJabbingState : PlayerActionState
 	}
 	
 	public override void OnBoundCommand() {
-		FSM.animationCancelled = true;
-		FSM.ActionTransition(FSM.actionStates.Bounding);
+		if (FSM.actionStates.Bounding.boundedEnemy != null) {
+			FSM.animationCancelled = true;
+		}
 	}
 	
 	public override void OnAttenuateCommand() {
@@ -294,6 +299,7 @@ public class PlayerBoundingState : PlayerActionState
 	}
 
 	public override void Exit() {
+		boundedEnemy = null;
 		FSM.movementAllowed = true;
 	}
 }

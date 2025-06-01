@@ -44,6 +44,11 @@ public class EnemyAI : MonoBehaviour
 
     protected virtual void FixedUpdate()
 	{
+		if (HP <= 0f) {
+			state = State.Dead;
+			animator.Play("Deflate");
+			rb.detectCollisions = false;
+		}
 		if (state == State.Bounded || state == State.Attacking) {
 			return;
 		}
@@ -51,11 +56,6 @@ public class EnemyAI : MonoBehaviour
 			timeDied += Time.fixedDeltaTime;
 			if (timeDied > 2f) Destroy(gameObject);
 			return;
-		}
-		if (HP <= 0f) {
-			state = State.Dead;
-			animator.Play("Deflate");
-			Destroy(rb);
 		}
 		RaycastHit hit;
 		bool isGrounded = Physics.Raycast(transform.position, Vector3.down, out hit, 0.1f, LayerMask.GetMask("Ground"));

@@ -20453,8 +20453,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 180360080}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.18060069, y: -0.68365455, z: 0.1806007, w: 0.6836544}
-  m_LocalPosition: {x: 24.584309, y: 2.3057468, z: -23.056324}
+  m_LocalRotation: {x: 0.1974427, y: -0.6789819, z: 0.19744273, w: 0.67898184}
+  m_LocalPosition: {x: 24.584309, y: 2.4629085, z: -23.056324}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -159718,8 +159718,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1541759658}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.1806007, y: -0.6836545, z: 0.18060066, w: 0.6836545}
-  m_LocalPosition: {x: 24.584309, y: 2.3057468, z: -23.056324}
+  m_LocalRotation: {x: 0.19744271, y: -0.6789819, z: 0.1974427, w: 0.6789819}
+  m_LocalPosition: {x: 24.584309, y: 2.4629085, z: -23.056324}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -159855,10 +159855,10 @@ MonoBehaviour:
       Height: 3
     Center:
       Radius: 2
-      Height: 0
+      Height: 0.5
     Bottom:
       Radius: 1
-      Height: -2
+      Height: 0
     SplineCurvature: 0.5
   RecenteringTarget: 3
   HorizontalAxis:

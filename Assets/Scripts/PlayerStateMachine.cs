@@ -176,6 +176,7 @@ public class PlayerStateMachine : MonoBehaviour
 	}
 	public void BasicHeal() {
 		HP += healAmt;
+		HP = Mathf.Max(HP, maxHP);
 	}
 	
     // Start is called once before the first execution of Update after the MonoBehaviour is created
