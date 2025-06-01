@@ -43,7 +43,7 @@ public class PlayerStateMachine : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {
+    {		
 		this.currentAction?.Tick();
         this.currentMovement?.Tick();
     }
@@ -79,6 +79,9 @@ public class PlayerStateMachine : MonoBehaviour
 		command = this.currentAction.FilterCommand(command);
 		command.execute(this.currentMovement, this.currentAction);
 	}
+	public void JumpHelper() {
+		currentVelocity.y = jumpSpeed;
+	}
 	
 	public void OnJab(InputAction.CallbackContext context) {
 		if (!context.started) return;
@@ -93,6 +96,10 @@ public class PlayerStateMachine : MonoBehaviour
 		command = this.currentMovement.FilterCommand(command);
 		command = this.currentAction.FilterCommand(command);
 		command.execute(this.currentMovement, this.currentAction);
+	}
+	
+	public void OnConsume() {
+		animator.Play("Consume");
 	}
 	
 	public void OnGearWheel(InputAction.CallbackContext context) { //Just for offense for now
@@ -146,5 +153,8 @@ public class PlayerStateMachine : MonoBehaviour
 		this.animator = GetComponent<Animator>();
 		this.MovementTransition(movementStates.Grounded);
 		this.ActionTransition(actionStates.Idle);
+		
+		Cursor.visible = false;
+		Cursor.lockState = CursorLockMode.Locked;
     }
 }

@@ -18,7 +18,7 @@ public class BasicChainDelegate : IAttackDelegate
 			comboStage = 0;
 		}
 		chainWindow = Time.time;
-		FSM.animator.Play(FSM.attackProfile.jabCombo.comboStages[comboStage].animationClip.name);
+		FSM.animator.Play(FSM.attackProfile.jabCombo.comboStages[comboStage].animationClip.name, 1);
 		comboStage = (comboStage + 1) % 3;
 	}
 }
