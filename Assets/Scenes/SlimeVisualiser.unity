@@ -323,7 +323,7 @@ MonoBehaviour:
       - m_Target: {fileID: 816813961}
         m_TargetAssemblyTypeName: PlayerStateMachine, Assembly-CSharp
         m_MethodName: OnJump
-        m_Mode: 1
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -387,7 +387,7 @@ MonoBehaviour:
       - m_Target: {fileID: 816813961}
         m_TargetAssemblyTypeName: PlayerStateMachine, Assembly-CSharp
         m_MethodName: OnConsume
-        m_Mode: 1
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -403,7 +403,7 @@ MonoBehaviour:
       - m_Target: {fileID: 816813961}
         m_TargetAssemblyTypeName: PlayerStateMachine, Assembly-CSharp
         m_MethodName: OnAttenuate
-        m_Mode: 1
+        m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -2291,7 +2291,7 @@ Transform:
   m_GameObject: {fileID: 919132149184193951}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.61675406, z: -0, w: 0.7871559}
-  m_LocalPosition: {x: -0.2293607, y: 0.738, z: 0.755}
+  m_LocalPosition: {x: -0.426, y: 0.691, z: 0.755}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2486,8 +2486,8 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.31
-  m_Height: 0.31
+  m_Radius: 0.3
+  m_Height: 0.3
   m_Direction: 1
   m_Center: {x: 0, y: 0.3, z: 0}
 --- !u!1 &999659817799856768
