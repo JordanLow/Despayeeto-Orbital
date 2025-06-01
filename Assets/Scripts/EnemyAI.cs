@@ -55,7 +55,7 @@ public class EnemyAI : MonoBehaviour
 		if (HP <= 0f) {
 			state = State.Dead;
 			animator.Play("Deflate");
-			rb.detectCollisions = false;
+			Destroy(rb);
 		}
 		RaycastHit hit;
 		bool isGrounded = Physics.Raycast(transform.position, Vector3.down, out hit, 0.1f, LayerMask.GetMask("Ground"));
