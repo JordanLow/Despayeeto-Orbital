@@ -36,7 +36,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Radical Slime Skeleton
+    path: Normal Slime Skeleton
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -61,7 +61,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Radical Slime Skeleton/Spine
+    path: Normal Slime Skeleton/Spine
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -86,7 +86,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Radical Slime Skeleton/Squish Bone
+    path: Normal Slime Skeleton/Squish Bone
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -111,7 +111,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Radical Slime Skeleton/Shuffle Driver
+    path: Normal Slime Skeleton/Shuffle Driver
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -136,7 +136,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Radical Slime Skeleton/Left Jab Driver
+    path: Normal Slime Skeleton/Left Jab Driver
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -161,7 +161,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Radical Slime Skeleton/Right Jab Driver
+    path: Normal Slime Skeleton/Right Jab Driver
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -186,7 +186,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Radical Slime Skeleton/Top Jab Driver
+    path: Normal Slime Skeleton/Top Jab Driver
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -211,7 +211,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Radical Slime Skeleton/Consume Driver
+    path: Normal Slime Skeleton/Consume Driver
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -236,7 +236,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Radical Slime Skeleton/Deflate Driver
+    path: Normal Slime Skeleton/Deflate Driver
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -261,7 +261,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Radical Slime Skeleton/Front Core Driver
+    path: Normal Slime Skeleton/Front Core Driver
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -286,7 +286,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Radical Slime Skeleton/Side Core Driver
+    path: Normal Slime Skeleton/Side Core Driver
   m_CompressedRotationCurves: []
   m_EulerCurves: []
   m_PositionCurves:
@@ -314,7 +314,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Radical Slime Skeleton
+    path: Normal Slime Skeleton
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -339,87 +339,87 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Radical Slime Skeleton/Spine
+    path: Normal Slime Skeleton/Spine
   - curve:
       serializedVersion: 2
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: {x: -0, y: 0, z: 0.008}
-        inSlope: {x: -0, y: -0, z: -0.0042463304}
-        outSlope: {x: -0, y: -0, z: -0.0042463304}
+        value: {x: -0, y: 0, z: 0.012999999}
+        inSlope: {x: -0, y: -0, z: -0.0069002863}
+        outSlope: {x: -0, y: -0, z: -0.0069002863}
         tangentMode: 0
         weightedMode: 0
         inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
         outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
       - serializedVersion: 3
         time: 0.041666668
-        value: {x: -0, y: 0, z: 0.0072164517}
-        inSlope: {x: -0, y: -0, z: -0.031908136}
-        outSlope: {x: -0, y: -0, z: -0.037003733}
+        value: {x: -0, y: 0, z: 0.011726732}
+        inSlope: {x: -0, y: -0, z: -0.051850714}
+        outSlope: {x: -0, y: -0, z: -0.060131058}
         tangentMode: 0
         weightedMode: 0
         inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
         outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
       - serializedVersion: 3
         time: 0.14166667
-        value: {x: -0, y: 0, z: 0.0024484296}
-        inSlope: {x: -0, y: -0, z: -0.045011204}
-        outSlope: {x: -0, y: -0, z: -0.04137133}
+        value: {x: -0, y: 0, z: 0.003978698}
+        inSlope: {x: -0, y: -0, z: -0.0731432}
+        outSlope: {x: -0, y: -0, z: -0.06722841}
         tangentMode: 0
         weightedMode: 0
         inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
         outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
       - serializedVersion: 3
         time: 0.15833333
-        value: {x: -0, y: 0, z: 0.0017953034}
-        inSlope: {x: -0, y: -0, z: -0.03700382}
-        outSlope: {x: -0, y: -0, z: -0.031908162}
+        value: {x: -0, y: 0, z: 0.0029173677}
+        inSlope: {x: -0, y: -0, z: -0.060131203}
+        outSlope: {x: -0, y: -0, z: -0.05185076}
         tangentMode: 0
         weightedMode: 0
         inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
         outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
       - serializedVersion: 3
         time: 0.16666667
-        value: {x: -0, y: 0, z: 0.0015294019}
-        inSlope: {x: -0, y: -0, z: -0.031908162}
-        outSlope: {x: -0, y: -0, z: -0.02608443}
+        value: {x: -0, y: 0, z: 0.0024852778}
+        inSlope: {x: -0, y: -0, z: -0.05185076}
+        outSlope: {x: -0, y: -0, z: -0.042387195}
         tangentMode: 0
         weightedMode: 0
         inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
         outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
       - serializedVersion: 3
         time: 0.175
-        value: {x: -0, y: 0, z: 0.0013120318}
-        inSlope: {x: -0, y: -0, z: -0.02608443}
-        outSlope: {x: -0, y: -0, z: -0.019533103}
+        value: {x: -0, y: 0, z: 0.0021320514}
+        inSlope: {x: -0, y: -0, z: -0.042387195}
+        outSlope: {x: -0, y: -0, z: -0.031741288}
         tangentMode: 0
         weightedMode: 0
         inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
         outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
       - serializedVersion: 3
         time: 0.18333334
-        value: {x: -0, y: 0, z: 0.0011492558}
-        inSlope: {x: -0, y: -0, z: -0.019533103}
-        outSlope: {x: -0, y: -0, z: -0.012253773}
+        value: {x: -0, y: 0, z: 0.0018675405}
+        inSlope: {x: -0, y: -0, z: -0.031741288}
+        outSlope: {x: -0, y: -0, z: -0.019912379}
         tangentMode: 0
         weightedMode: 0
         inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
         outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
       - serializedVersion: 3
         time: 0.19166666
-        value: {x: -0, y: 0, z: 0.0010471412}
-        inSlope: {x: -0, y: -0, z: -0.012253773}
-        outSlope: {x: -0, y: -0, z: -0.004246327}
+        value: {x: -0, y: 0, z: 0.0017016041}
+        inSlope: {x: -0, y: -0, z: -0.019912379}
+        outSlope: {x: -0, y: -0, z: -0.0069002807}
         tangentMode: 0
         weightedMode: 0
         inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
         outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
       - serializedVersion: 3
         time: 0.2
-        value: {x: -0, y: 0, z: 0.0010117551}
-        inSlope: {x: -0, y: -0, z: -0.004246327}
-        outSlope: {x: -0, y: -0, z: -0.004246327}
+        value: {x: -0, y: 0, z: 0.0016441018}
+        inSlope: {x: -0, y: -0, z: -0.0069002807}
+        outSlope: {x: -0, y: -0, z: -0.0069002807}
         tangentMode: 0
         weightedMode: 0
         inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
@@ -427,13 +427,13 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Radical Slime Skeleton/Squish Bone
+    path: Normal Slime Skeleton/Squish Bone
   - curve:
       serializedVersion: 2
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: {x: 0.008906071, y: 0, z: 0.000031605723}
+        value: {x: 0.014472364, y: 0, z: 0.000051359293}
         inSlope: {x: 0, y: 0, z: 0}
         outSlope: {x: 0, y: 0, z: 0}
         tangentMode: 0
@@ -442,32 +442,7 @@ AnimationClip:
         outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
       - serializedVersion: 3
         time: 0.2
-        value: {x: 0.008906071, y: 0, z: 0.000031605723}
-        inSlope: {x: 0, y: 0, z: 0}
-        outSlope: {x: 0, y: 0, z: 0}
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
-        outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    path: Radical Slime Skeleton/Shuffle Driver
-  - curve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: {x: 0.012468501, y: 0, z: 0.000031605723}
-        inSlope: {x: 0, y: 0, z: 0}
-        outSlope: {x: 0, y: 0, z: 0}
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
-        outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
-      - serializedVersion: 3
-        time: 0.2
-        value: {x: 0.012468501, y: 0, z: 0.000031605723}
+        value: {x: 0.014472364, y: 0, z: 0.000051359293}
         inSlope: {x: 0, y: 0, z: 0}
         outSlope: {x: 0, y: 0, z: 0}
         tangentMode: 0
@@ -477,13 +452,13 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Radical Slime Skeleton/Left Jab Driver
+    path: Normal Slime Skeleton/Shuffle Driver
   - curve:
       serializedVersion: 2
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: {x: 0.016030928, y: 0, z: 0.000031605723}
+        value: {x: 0.020261312, y: 0, z: 0.000051359293}
         inSlope: {x: 0, y: 0, z: 0}
         outSlope: {x: 0, y: 0, z: 0}
         tangentMode: 0
@@ -492,7 +467,7 @@ AnimationClip:
         outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
       - serializedVersion: 3
         time: 0.2
-        value: {x: 0.016030928, y: 0, z: 0.000031605723}
+        value: {x: 0.020261312, y: 0, z: 0.000051359293}
         inSlope: {x: 0, y: 0, z: 0}
         outSlope: {x: 0, y: 0, z: 0}
         tangentMode: 0
@@ -502,13 +477,13 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Radical Slime Skeleton/Right Jab Driver
+    path: Normal Slime Skeleton/Left Jab Driver
   - curve:
       serializedVersion: 2
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: {x: 0.01959336, y: 0, z: 0.000031605723}
+        value: {x: 0.026050257, y: 0, z: 0.000051359293}
         inSlope: {x: 0, y: 0, z: 0}
         outSlope: {x: 0, y: 0, z: 0}
         tangentMode: 0
@@ -517,7 +492,7 @@ AnimationClip:
         outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
       - serializedVersion: 3
         time: 0.2
-        value: {x: 0.01959336, y: 0, z: 0.000031605723}
+        value: {x: 0.026050257, y: 0, z: 0.000051359293}
         inSlope: {x: 0, y: 0, z: 0}
         outSlope: {x: 0, y: 0, z: 0}
         tangentMode: 0
@@ -527,13 +502,13 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Radical Slime Skeleton/Top Jab Driver
+    path: Normal Slime Skeleton/Right Jab Driver
   - curve:
       serializedVersion: 2
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: {x: 0.02315579, y: 0, z: 0.000031605723}
+        value: {x: 0.031839207, y: 0, z: 0.000051359293}
         inSlope: {x: 0, y: 0, z: 0}
         outSlope: {x: 0, y: 0, z: 0}
         tangentMode: 0
@@ -542,7 +517,7 @@ AnimationClip:
         outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
       - serializedVersion: 3
         time: 0.2
-        value: {x: 0.02315579, y: 0, z: 0.000031605723}
+        value: {x: 0.031839207, y: 0, z: 0.000051359293}
         inSlope: {x: 0, y: 0, z: 0}
         outSlope: {x: 0, y: 0, z: 0}
         tangentMode: 0
@@ -552,114 +527,139 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Radical Slime Skeleton/Consume Driver
+    path: Normal Slime Skeleton/Top Jab Driver
   - curve:
       serializedVersion: 2
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: {x: 0.02671822, y: 0, z: 0.000031605723}
-        inSlope: {x: -0, y: -0, z: 0.004861112}
-        outSlope: {x: -0, y: -0, z: 0.004861112}
+        value: {x: 0.037628155, y: 0, z: 0.000051359293}
+        inSlope: {x: 0, y: 0, z: 0}
+        outSlope: {x: 0, y: 0, z: 0}
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
+        outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
+      - serializedVersion: 3
+        time: 0.2
+        value: {x: 0.037628155, y: 0, z: 0.000051359293}
+        inSlope: {x: 0, y: 0, z: 0}
+        outSlope: {x: 0, y: 0, z: 0}
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
+        outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    path: Normal Slime Skeleton/Consume Driver
+  - curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: {x: 0.043417104, y: 0, z: 0.000051359293}
+        inSlope: {x: -0, y: -0, z: 0.007899307}
+        outSlope: {x: -0, y: -0, z: 0.007899307}
         tangentMode: 0
         weightedMode: 0
         inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
         outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
       - serializedVersion: 3
         time: 0.008333334
-        value: {x: 0.02671822, y: 0, z: 0.00007211499}
-        inSlope: {x: -0, y: -0, z: 0.004861112}
-        outSlope: {x: -0, y: -0, z: 0.014027779}
+        value: {x: 0.043417104, y: 0, z: 0.00011718685}
+        inSlope: {x: -0, y: -0, z: 0.007899307}
+        outSlope: {x: -0, y: -0, z: 0.022795139}
         tangentMode: 0
         weightedMode: 0
         inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
         outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
       - serializedVersion: 3
         time: 0.016666668
-        value: {x: 0.02671822, y: 0, z: 0.00018901317}
-        inSlope: {x: -0, y: -0, z: 0.014027779}
-        outSlope: {x: -0, y: -0, z: 0.022361103}
+        value: {x: 0.043417104, y: 0, z: 0.00030714637}
+        inSlope: {x: -0, y: -0, z: 0.022795139}
+        outSlope: {x: -0, y: -0, z: 0.03633679}
         tangentMode: 0
         weightedMode: 0
         inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
         outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
       - serializedVersion: 3
         time: 0.025
-        value: {x: 0.02671822, y: 0, z: 0.00037535568}
-        inSlope: {x: -0, y: -0, z: 0.022361103}
-        outSlope: {x: -0, y: -0, z: 0.029861122}
+        value: {x: 0.043417104, y: 0, z: 0.0006099529}
+        inSlope: {x: -0, y: -0, z: 0.03633679}
+        outSlope: {x: -0, y: -0, z: 0.048524316}
         tangentMode: 0
         weightedMode: 0
         inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
         outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
       - serializedVersion: 3
         time: 0.033333335
-        value: {x: 0.02671822, y: 0, z: 0.0006241984}
-        inSlope: {x: -0, y: -0, z: 0.029861122}
-        outSlope: {x: -0, y: -0, z: 0.036527764}
+        value: {x: 0.043417104, y: 0, z: 0.0010143223}
+        inSlope: {x: -0, y: -0, z: 0.048524316}
+        outSlope: {x: -0, y: -0, z: 0.059357613}
         tangentMode: 0
         weightedMode: 0
         inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
         outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
       - serializedVersion: 3
         time: 0.041666668
-        value: {x: 0.02671822, y: 0, z: 0.0009285964}
-        inSlope: {x: -0, y: -0, z: 0.036527764}
-        outSlope: {x: -0, y: -0, z: 0.042361125}
+        value: {x: 0.043417104, y: 0, z: 0.001508969}
+        inSlope: {x: -0, y: -0, z: 0.059357613}
+        outSlope: {x: -0, y: -0, z: 0.06883682}
         tangentMode: 0
         weightedMode: 0
         inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
         outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
       - serializedVersion: 3
         time: 0.05
-        value: {x: 0.02671822, y: 0, z: 0.0012816058}
-        inSlope: {x: -0, y: -0, z: 0.042361125}
-        outSlope: {x: -0, y: -0, z: 0.047361065}
+        value: {x: 0.043417104, y: 0, z: 0.002082609}
+        inSlope: {x: -0, y: -0, z: 0.06883682}
+        outSlope: {x: -0, y: -0, z: 0.07696172}
         tangentMode: 0
         weightedMode: 0
         inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
         outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
       - serializedVersion: 3
         time: 0.058333334
-        value: {x: 0.02671822, y: 0, z: 0.0016762813}
-        inSlope: {x: -0, y: -0, z: 0.047361065}
-        outSlope: {x: -0, y: -0, z: 0.051527835}
+        value: {x: 0.043417104, y: 0, z: 0.002723957}
+        inSlope: {x: -0, y: -0, z: 0.07696172}
+        outSlope: {x: -0, y: -0, z: 0.083732724}
         tangentMode: 0
         weightedMode: 0
         inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
         outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
       - serializedVersion: 3
         time: 0.09166667
-        value: {x: 0.02671822, y: 0, z: 0.003532763}
-        inSlope: {x: -0, y: -0, z: 0.059027772}
-        outSlope: {x: -0, y: -0, z: 0.05986113}
+        value: {x: 0.043417104, y: 0, z: 0.0057407394}
+        inSlope: {x: -0, y: -0, z: 0.09592012}
+        outSlope: {x: -0, y: -0, z: 0.09727433}
         tangentMode: 0
         weightedMode: 0
         inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
         outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
       - serializedVersion: 3
         time: 0.15833333
-        value: {x: 0.02671822, y: 0, z: 0.007134616}
-        inSlope: {x: -0, y: -0, z: 0.042361207}
-        outSlope: {x: -0, y: -0, z: 0.036527622}
+        value: {x: 0.043417104, y: 0, z: 0.01159375}
+        inSlope: {x: -0, y: -0, z: 0.06883696}
+        outSlope: {x: -0, y: -0, z: 0.059357382}
         tangentMode: 0
         weightedMode: 0
         inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
         outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
       - serializedVersion: 3
         time: 0.19166666
-        value: {x: 0.02671822, y: 0, z: 0.007991097}
-        inSlope: {x: -0, y: -0, z: 0.014027724}
-        outSlope: {x: -0, y: -0, z: 0.004861103}
+        value: {x: 0.043417104, y: 0, z: 0.012985531}
+        inSlope: {x: -0, y: -0, z: 0.02279505}
+        outSlope: {x: -0, y: -0, z: 0.007899291}
         tangentMode: 0
         weightedMode: 0
         inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
         outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
       - serializedVersion: 3
         time: 0.2
-        value: {x: 0.02671822, y: 0, z: 0.008031606}
-        inSlope: {x: -0, y: -0, z: 0.004861103}
-        outSlope: {x: -0, y: -0, z: 0.004861103}
+        value: {x: 0.043417104, y: 0, z: 0.013051359}
+        inSlope: {x: -0, y: -0, z: 0.007899291}
+        outSlope: {x: -0, y: -0, z: 0.007899291}
         tangentMode: 0
         weightedMode: 0
         inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
@@ -667,13 +667,13 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Radical Slime Skeleton/Deflate Driver
+    path: Normal Slime Skeleton/Deflate Driver
   - curve:
       serializedVersion: 2
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: {x: -0.008906071, y: 0, z: 0.000031605723}
+        value: {x: -0.014472364, y: 0, z: 0.000051359293}
         inSlope: {x: 0, y: 0, z: 0}
         outSlope: {x: 0, y: 0, z: 0}
         tangentMode: 0
@@ -682,7 +682,7 @@ AnimationClip:
         outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
       - serializedVersion: 3
         time: 0.2
-        value: {x: -0.008906071, y: 0, z: 0.000031605723}
+        value: {x: -0.014472364, y: 0, z: 0.000051359293}
         inSlope: {x: 0, y: 0, z: 0}
         outSlope: {x: 0, y: 0, z: 0}
         tangentMode: 0
@@ -692,13 +692,13 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Radical Slime Skeleton/Front Core Driver
+    path: Normal Slime Skeleton/Front Core Driver
   - curve:
       serializedVersion: 2
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: {x: -0.012468501, y: 0, z: 0.000031605723}
+        value: {x: -0.020261312, y: 0, z: 0.000051359293}
         inSlope: {x: 0, y: 0, z: 0}
         outSlope: {x: 0, y: 0, z: 0}
         tangentMode: 0
@@ -707,7 +707,7 @@ AnimationClip:
         outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
       - serializedVersion: 3
         time: 0.2
-        value: {x: -0.012468501, y: 0, z: 0.000031605723}
+        value: {x: -0.020261312, y: 0, z: 0.000051359293}
         inSlope: {x: 0, y: 0, z: 0}
         outSlope: {x: 0, y: 0, z: 0}
         tangentMode: 0
@@ -717,7 +717,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Radical Slime Skeleton/Side Core Driver
+    path: Normal Slime Skeleton/Side Core Driver
   m_ScaleCurves:
   - curve:
       serializedVersion: 2
@@ -743,7 +743,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Radical Slime Skeleton
+    path: Normal Slime Skeleton
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -795,7 +795,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Radical Slime Skeleton/Spine
+    path: Normal Slime Skeleton/Spine
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -820,7 +820,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Radical Slime Skeleton/Squish Bone
+    path: Normal Slime Skeleton/Squish Bone
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -845,7 +845,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Radical Slime Skeleton/Shuffle Driver
+    path: Normal Slime Skeleton/Shuffle Driver
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -870,7 +870,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Radical Slime Skeleton/Left Jab Driver
+    path: Normal Slime Skeleton/Left Jab Driver
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -895,7 +895,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Radical Slime Skeleton/Right Jab Driver
+    path: Normal Slime Skeleton/Right Jab Driver
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -920,7 +920,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Radical Slime Skeleton/Top Jab Driver
+    path: Normal Slime Skeleton/Top Jab Driver
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -945,7 +945,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Radical Slime Skeleton/Consume Driver
+    path: Normal Slime Skeleton/Consume Driver
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -970,7 +970,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Radical Slime Skeleton/Deflate Driver
+    path: Normal Slime Skeleton/Deflate Driver
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -995,7 +995,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Radical Slime Skeleton/Front Core Driver
+    path: Normal Slime Skeleton/Front Core Driver
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -1020,7 +1020,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Radical Slime Skeleton/Side Core Driver
+    path: Normal Slime Skeleton/Side Core Driver
   m_FloatCurves:
   - serializedVersion: 2
     curve:
@@ -1048,7 +1048,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: blendShape.Right Jab
-    path: Radical Slime Membrane
+    path: Normal Slime Membrane
     classID: 137
     script: {fileID: 0}
     flags: 0
@@ -1078,7 +1078,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: blendShape.Left Jab
-    path: Radical Slime Membrane
+    path: Normal Slime Membrane
     classID: 137
     script: {fileID: 0}
     flags: 0
@@ -1108,7 +1108,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: blendShape.Top Jab
-    path: Radical Slime Membrane
+    path: Normal Slime Membrane
     classID: 137
     script: {fileID: 0}
     flags: 0
@@ -1138,7 +1138,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: blendShape.Consume
-    path: Radical Slime Membrane
+    path: Normal Slime Membrane
     classID: 137
     script: {fileID: 0}
     flags: 0
@@ -1195,7 +1195,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: blendShape.Deflate
-    path: Radical Slime Membrane
+    path: Normal Slime Membrane
     classID: 137
     script: {fileID: 0}
     flags: 0
@@ -1225,7 +1225,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: blendShape.Shuffle
-    path: Radical Slime Membrane
+    path: Normal Slime Membrane
     classID: 137
     script: {fileID: 0}
     flags: 0

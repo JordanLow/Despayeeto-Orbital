@@ -153,7 +153,22 @@ public class PlayerStateMachine : MonoBehaviour
 	[SerializeField] public float jumpSpeed { get; } = 4f;
 	[SerializeField] public PlayerAttackSet attackProfile;
 	
-	[SerializeField] private float HP = 50f;
+	[SerializeField] private float maxHP = 50f;
+	private float HP;
+	
+	// Maybe move this stuff in a separate script if it gets too clunky
+	
+	public void getHit(GameObject src, float dmg) {
+		if (currentAction == actionStates.Attenuate) return;
+		HP -= dmg;
+		if (HP <= 0) {
+			animator.Play("Deflate");
+			GetComponent<PlayerInput>().DeactivateInput();
+		}
+	}
+	public void BasicHeal() {
+		HP = maxHP;
+	}
 	
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -177,6 +192,7 @@ public class PlayerStateMachine : MonoBehaviour
 		this.animator = GetComponent<Animator>();
 		this.MovementTransition(movementStates.Grounded);
 		this.ActionTransition(actionStates.Idle);
+		HP = maxHP;
 		
 		Cursor.visible = false;
 		Cursor.lockState = CursorLockMode.Locked;
