@@ -43,3 +43,11 @@ public class BoundCommand : Command
 		actionState.OnBoundCommand();
 	}
 }
+
+public class ConsumeCommand : Command
+{
+	public void execute(PlayerMovementState movementState, PlayerActionState actionState) {
+		movementState.OnConsumeCommand();
+		actionState.OnConsumeCommand();
+	}
+}
