@@ -1,21 +1,26 @@
 using UnityEngine;
 using UnityEngine.AI;
 
+
+// Refactor into extensible for different enemy types in the future
 public class EnemyAI : MonoBehaviour
 {
 	[SerializeField] private float speed;
 	
-    private Rigidbody rb;
+    protected Rigidbody rb;
 	private NavMeshPath path;
 	private int pathIdx;
 	private Vector3 velocity;
 	private Animator animator;
 	
 	[SerializeField] private float HP = 20f;
+	[SerializeField] private float Devourable = 10f;
+	[SerializeField] public float heightOffset = 0.45f;
 	
 	private enum State {
 		Wandering,
 		Chasing,
+		Attacking,
 		Bounded,
 		Dead
 	}
@@ -23,6 +28,7 @@ public class EnemyAI : MonoBehaviour
 	private State state;
 	private float curLimit = 0f;
 	private float rLimit = 0.4f;
+	private float timeDied = 0f;
 	
 	void Start()
 	{
@@ -36,19 +42,23 @@ public class EnemyAI : MonoBehaviour
 		GetAimlessDestination();
 	}
 
-    void FixedUpdate()
+    protected virtual void FixedUpdate()
 	{
+		if (state == State.Bounded || state == State.Attacking) {
+			return;
+		}
+		if (state == State.Dead) {
+			timeDied += Time.fixedDeltaTime;
+			if (timeDied > 2f) Destroy(gameObject);
+			return;
+		}
 		if (HP <= 0f) {
 			state = State.Dead;
 			animator.Play("Deflate");
 			rb.detectCollisions = false;
 		}
-		if (state == State.Bounded || state == State.Dead) {
-			return;
-		}
 		RaycastHit hit;
 		bool isGrounded = Physics.Raycast(transform.position, Vector3.down, out hit, 0.1f, LayerMask.GetMask("Ground"));
-		bool withinRing = false;
 		if (state == State.Wandering) {
 			Collider[] hits = Physics.OverlapSphere(transform.position, 4f, LayerMask.GetMask("Player"));
 			if (hits.Length > 0) {
@@ -66,9 +76,8 @@ public class EnemyAI : MonoBehaviour
 				GetAimlessDestination();
 			} else {
 				if (Vector3.Distance(VectorYNormalize(transform.position), VectorYNormalize(hits[0].transform.position)) <= 1.4f) {
-					withinRing = true;
-				}
-				if (curLimit >= rLimit) {
+					state = State.Attacking;
+				} else if (curLimit >= rLimit) {
 					PathfindToPlayer(hits[0].transform);
 					curLimit = 0f;
 					//Debug.Log("Pathing to " + hits[0].transform.position);
@@ -84,7 +93,6 @@ public class EnemyAI : MonoBehaviour
 				pathIdx++;
 			} else {
 				Vector3 move = dir.normalized * speed;
-				if (withinRing) move = Vector3.zero;
 				velocity.x = move.x;
 				velocity.z = move.z;
 			}
@@ -96,6 +104,15 @@ public class EnemyAI : MonoBehaviour
 			velocity.x = 0;
 			velocity.z = 0;
 			GetAimlessDestination();
+		}
+		if (state == State.Attacking) {
+			animator.Play("Attack");
+			return;
+		}
+		if (velocity.magnitude > 0.05f) {
+			animator.SetBool("Moving", true);
+		} else {
+			animator.SetBool("Moving", false);
 		}
 		Vector3 dest = rb.position + velocity * Time.fixedDeltaTime;
 		if (!isGrounded && velocity.y > Physics.gravity.y) velocity.y += Physics.gravity.y * Time.fixedDeltaTime;
@@ -133,8 +150,17 @@ public class EnemyAI : MonoBehaviour
 		return new Vector2(v3.x, v3.z);
 	}
 	
-	public void SetBound(bool setTo) {
-		state = setTo ? State.Bounded : State.Wandering;
+	public virtual void AnimationEndHelper() {
+		state = State.Wandering;
+	}
+	
+	public virtual void SetBound(bool setTo) {
+		if (setTo && state == State.Attacking) {
+			animator.Play("EmptyAnimanim");
+			state = State.Bounded;
+			return;
+		}
+ 		state = setTo ? State.Bounded : State.Wandering;
 		Debug.Log("Enemy State: " + state);
 	}
 	
@@ -142,7 +168,11 @@ public class EnemyAI : MonoBehaviour
 		HP -= dmg;
 	}
 	
-	public void attemptConsume() {
-		if (HP <= 10f) Destroy(gameObject);
+	public bool attemptConsume() {
+		if (HP <= Devourable) {
+			Destroy(gameObject);
+			return true;
+		}
+		return false;
 	}
 }

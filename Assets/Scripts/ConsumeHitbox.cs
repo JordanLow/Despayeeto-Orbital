@@ -6,6 +6,9 @@ public class ConsumeHitbox : MonoBehaviour
 	
 	void OnTriggerEnter(Collider other) {
 		if (other.gameObject.layer != LayerMask.NameToLayer("Enemy")) return;
-		other.GetComponent<EnemyAI>().attemptConsume();
+		if (other.GetComponent<EnemyAI>().attemptConsume()) {
+			// For now just Basic Consume logic, evolution refactor later
+			owner.GetComponent<PlayerStateMachine>().BasicHeal();
+		}
 	}
 }
