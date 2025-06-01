@@ -165,10 +165,10 @@ public class PlayerBoundState : PlayerMovementState
 	
 	public override void OnJumpCommand() {
 		if (!atEnemy) return;
-		FSM.MovementTransition(FSM.movementStates.Grounded);
-		FSM.ActionTransition(FSM.actionStates.Idle);
 		boundedEnemy.SetBound(false);
 		Physics.IgnoreCollision(FSM.controller, boundedEnemy.GetComponent<Collider>(), false);
+		FSM.MovementTransition(FSM.movementStates.Grounded);
+		FSM.ActionTransition(FSM.actionStates.Idle);
 		FSM.movementStates.Grounded.OnJumpCommand();
 	}
 }
