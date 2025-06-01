@@ -727,6 +727,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 2
   HP: 20
+  Devourable: 10
+  heightOffset: 0.45
 --- !u!95 &34956879277136499
 Animator:
   serializedVersion: 7
@@ -1034,7 +1036,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   owner: {fileID: 6802645137398682298}
-  damage: 5
+  damage: 12
 --- !u!1 &8990644344166992247
 GameObject:
   m_ObjectHideFlags: 0
