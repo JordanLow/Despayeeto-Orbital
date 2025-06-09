@@ -82,6 +82,8 @@ public class PlayerStateMachine : MonoBehaviour
 	public Vector3 inputDirection;
 	public bool movementAllowed = true;
 	[SerializeField] GameObject offenseGearWheel;
+	[SerializeField] GameObject defenseGearWheel;
+	private int inGearWheel = 0; // 0 = Not in Gear Wheel, 1 = Offense, 2 = Defense
 	
 	public void OnMove(InputAction.CallbackContext context) {
 		Vector2 direction = context.ReadValue<Vector2>() * moveSpeed;
@@ -125,8 +127,10 @@ public class PlayerStateMachine : MonoBehaviour
 		command.execute(this.currentMovement, this.currentAction);
 	}
 	
-	public void OnGearWheel(InputAction.CallbackContext context) { //Just for offense for now
+	public void OnOffenseGearWheel(InputAction.CallbackContext context) {
 		if (context.started) {
+			if (inGearWheel != 0) return;
+			inGearWheel = 1;
 			Time.timeScale = 0.3f;
 			// Pop up HUD
 			offenseGearWheel.SetActive(true);
@@ -134,15 +138,41 @@ public class PlayerStateMachine : MonoBehaviour
 			CinemachineCamera cam = Camera.main.GetComponent<CinemachineBrain>().ActiveVirtualCamera as CinemachineCamera;
 			cam.GetComponent<CinemachineInputAxisController>().enabled = false;
 		} else if (context.canceled) {
+			if (inGearWheel != 1) return;
+			inGearWheel = 0;
 			Time.timeScale = 1f;
 			// Close HUD and queue weapon swap
 			offenseGearWheel.SetActive(false);
 			// Re-enable camera look
 			CinemachineCamera cam = Camera.main.GetComponent<CinemachineBrain>().ActiveVirtualCamera as CinemachineCamera;
 			cam.GetComponent<CinemachineInputAxisController>().enabled = true;
-			//Update Weapon
+			// Update Offense
 			Debug.Log("Mode: " + offenseGearWheel.GetComponent<RadialMenu>().att);
-			actionStates.Jabbing.modeSet(offenseGearWheel.GetComponent<RadialMenu>().att);
+			// actionStates.Jabbing.modeSet(offenseGearWheel.GetComponent<RadialMenu>().att);
+		}
+	}
+	public void OnDefenseGearWheel(InputAction.CallbackContext context) {
+		if (context.started) {
+			if (inGearWheel != 0) return;
+			inGearWheel = 2;
+			Time.timeScale = 0.3f;
+			// Pop up HUD
+			defenseGearWheel.SetActive(true);
+			// Disable camera look
+			CinemachineCamera cam = Camera.main.GetComponent<CinemachineBrain>().ActiveVirtualCamera as CinemachineCamera;
+			cam.GetComponent<CinemachineInputAxisController>().enabled = false;
+		} else if (context.canceled) {
+			if (inGearWheel != 2) return;
+			inGearWheel = 0;
+			Time.timeScale = 1f;
+			// Close HUD and queue weapon swap
+			defenseGearWheel.SetActive(false);
+			// Re-enable camera look
+			CinemachineCamera cam = Camera.main.GetComponent<CinemachineBrain>().ActiveVirtualCamera as CinemachineCamera;
+			cam.GetComponent<CinemachineInputAxisController>().enabled = true;
+			// Update Defense
+			Debug.Log("Mode: " + defenseGearWheel.GetComponent<RadialMenu>().att);
+			// actionStates.Jabbing.modeSet(offenseGearWheel.GetComponent<RadialMenu>().att);
 		}
 	}
 	

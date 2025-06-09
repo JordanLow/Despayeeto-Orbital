@@ -42,9 +42,18 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "GearWheel",
+                    "name": "OffenseGearWheel",
                     "type": "Button",
                     "id": "dd050036-3c4a-46e5-845d-3c93a5343f62",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "DefenseGearWheel",
+                    "type": "Button",
+                    "id": "803666d4-23a6-4819-99b4-008e9c5b028c",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -187,18 +196,40 @@
                     "interactions": "Hold",
                     "processors": "",
                     "groups": ";MnK",
-                    "action": "GearWheel",
+                    "action": "OffenseGearWheel",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
                     "id": "c4f2eb38-a51a-472b-9248-61d2364572c1",
+                    "path": "<Gamepad>/rightShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Controller",
+                    "action": "OffenseGearWheel",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "44bfa4c2-f471-408a-a154-441a699433e2",
+                    "path": "<Keyboard>/q",
+                    "interactions": "Hold",
+                    "processors": "",
+                    "groups": ";MnK",
+                    "action": "DefenseGearWheel",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ec42e607-65a0-4038-8669-5a3461c6ba0e",
                     "path": "<Gamepad>/leftShoulder",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Controller",
-                    "action": "GearWheel",
+                    "action": "DefenseGearWheel",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
