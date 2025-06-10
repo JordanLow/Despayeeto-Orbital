@@ -13,6 +13,8 @@ public abstract class PlayerState
 	public virtual void OnAttenuateCommand() { }
 	public virtual void OnBoundCommand() { }
 	public virtual void OnConsumeCommand() { }
+	public virtual void OnChargeRollCommand() { }
+	public virtual void OnSlamCommand() { }
 }
 
 public abstract class PlayerMovementState : PlayerState
@@ -52,6 +54,17 @@ public abstract class PlayerActionState : PlayerState
 	public virtual void modeSet(int mode) { }
 }
 
+public abstract class PlayerMetaState : PlayerState
+{
+	protected readonly PlayerStateMachine FSM;
+	
+	public PlayerMetaState(PlayerStateMachine ctx) {
+		this.FSM = ctx;
+	}
+	
+	public virtual void modeSet(int mode) { }
+}
+
 public class PlayerGroundedState : PlayerMovementState
 {
 	public PlayerGroundedState(PlayerStateMachine ctx) : base(ctx) { }
@@ -77,6 +90,9 @@ public class PlayerGroundedState : PlayerMovementState
 	
 	public override Command FilterCommand(Command command) {
 		if (isJumping) return new VoidCommand();
+		if (command is SlamCommand) {
+			return new ConsumeCommand();
+		}
 		return command;
 	}
 
@@ -88,9 +104,11 @@ public class PlayerGroundedState : PlayerMovementState
 
 public class PlayerAirborneState : PlayerMovementState
 {
-	public PlayerAirborneState(PlayerStateMachine ctx) : base(ctx) { }
 	private float minimumAirborneTime = 0.05f;
 	private float jumpEnterTime;
+	public bool slamming = false;
+	
+	public PlayerAirborneState(PlayerStateMachine ctx) : base(ctx) { }
 	
 	public override void Enter() {
 		jumpEnterTime = Time.time;
@@ -102,6 +120,11 @@ public class PlayerAirborneState : PlayerMovementState
 		//if (FSM.controller.isGrounded
 		&& Time.time - jumpEnterTime > minimumAirborneTime) {
 			FSM.MovementTransition(FSM.movementStates.Grounded);
+			if (slamming) {
+				// Play the Slamming attack instead
+				FSM.ActionTransition(FSM.actionStates.Idle);
+				slamming = false;
+			}
 			FSM.animator.Play("Land");
 		}
 	}
@@ -191,6 +214,14 @@ public class PlayerIdleState : PlayerActionState
 		FSM.ActionTransition(FSM.actionStates.Consuming);
 	}
 	
+	public override void OnChargeRollCommand() {
+		FSM.ActionTransition(FSM.actionStates.ChargeRoll);
+	}
+	
+	public override void OnSlamCommand() {
+		FSM.ActionTransition(FSM.actionStates.Slamming);
+	}
+	
 	public override void Tick() {
 		if (jabBuffer) {
 			jabBuffer = false;
@@ -207,7 +238,7 @@ public class PlayerJabbingState : PlayerActionState
 	private int qmode = 0;
 
 	public PlayerJabbingState(PlayerStateMachine ctx) : base(ctx) {
-		attackSets = new IAttackDelegate[2] { new BasicChainDelegate(), new GentlemanDelegate() };
+		attackSets = new IAttackDelegate[1] { new BasicChainDelegate() };
 		curAttack = attackSets[0];
 	}
 	
@@ -327,5 +358,95 @@ public class PlayerConsumingState : PlayerActionState
 	public override void OnAttenuateCommand() {
 		FSM.animationCancelled = true;
 		FSM.ActionTransition(FSM.actionStates.Attenuate);
+	}
+}
+
+public class PlayerChargeRollState : PlayerActionState
+{
+	private float chargeTime;
+	
+	public PlayerChargeRollState(PlayerStateMachine ctx) : base(ctx) { }
+	
+	public override void Enter() {
+		FSM.movementAllowed = false;
+		chargeTime = 0f;
+	}
+	
+	public override void Exit() {
+		FSM.movementAllowed = true;
+		FSM.actionStates.Rolling.power = Mathf.Min(chargeTime, 5f);
+	}
+	
+	public override void Tick() {
+		chargeTime += Time.deltaTime;
+	}
+}
+
+public class PlayerRollingState : PlayerActionState
+{
+	public float power;
+	
+	public PlayerRollingState(PlayerStateMachine ctx) : base(ctx) { }
+	
+	public override void Enter() {
+		FSM.movementAllowed = false;
+		// Lock onto some nearby enemy, probably with a dynamically updating direction
+	}
+	
+	public override void Exit() {
+		FSM.movementAllowed = true;
+	}
+	
+	public override void Tick() {
+		// Enable some rolling hitbox
+		FSM.controller.Move(FSM.transform.forward * power * 5f * Time.deltaTime);
+	}
+	
+	public override void OnJumpCommand() {
+		FSM.ActionTransition(FSM.actionStates.Idle);
+	}
+}
+
+public class PlayerSlammingState : PlayerActionState
+{
+	public PlayerSlammingState(PlayerStateMachine ctx) : base(ctx) { }
+	
+	public override void Enter() {
+		FSM.movementAllowed = false;
+		FSM.currentVelocity.y = 5f;
+		FSM.movementStates.Airborne.slamming = true;
+	}
+	
+	public override void Exit() {
+		FSM.movementAllowed = true;
+	}
+}
+
+public class PlayerNormalState : PlayerMetaState
+{
+	public PlayerNormalState(PlayerStateMachine ctx) : base(ctx) { }
+}
+
+public class PlayerCurledState : PlayerMetaState
+{
+	public PlayerCurledState(PlayerStateMachine ctx) : base(ctx) { }
+	
+	public override void Enter() {
+		FSM.animator.Play("Curl", 2);
+	}
+	
+	public override void Exit() {
+		FSM.ActionTransition(FSM.actionStates.Idle);
+		FSM.animator.Play("Uncurl", 2);
+	}
+	
+	public override Command FilterCommand(Command command) {
+		if (command is JabCommand) {
+			return new ChargeRollCommand();
+		}
+		if (command is ConsumeCommand) {
+			return new SlamCommand();
+		}
+		return command;
 	}
 }

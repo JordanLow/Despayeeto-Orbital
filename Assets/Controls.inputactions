@@ -76,6 +76,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "HoldAction",
+                    "type": "Button",
+                    "id": "cc699afc-5f35-4616-a7f5-27ba8adcd8e9",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -296,6 +305,28 @@
                     "processors": "",
                     "groups": ";Controller",
                     "action": "Attenuate",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b0254dc7-9301-41fd-9e18-25f023754397",
+                    "path": "<Keyboard>/shift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";MnK",
+                    "action": "HoldAction",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "9709e71a-8b16-4dae-93e1-f4162559ad8c",
+                    "path": "<Gamepad>/leftTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Controller",
+                    "action": "HoldAction",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -31,25 +31,48 @@ public class PlayerStateMachine : MonoBehaviour
 		public PlayerAttenuateState Attenuate { get; }
 		public PlayerBoundingState Bounding { get; }
 		public PlayerConsumingState Consuming { get; }
+		public PlayerChargeRollState ChargeRoll { get; }
+		public PlayerRollingState Rolling { get; }
+		public PlayerSlammingState Slamming { get; }
 		
 		public ActionRegion(PlayerIdleState idleState,
 			PlayerJabbingState jabbingState,
 			PlayerAttenuateState attenuateState,
 			PlayerBoundingState boundingState,
-			PlayerConsumingState consumingState) {
+			PlayerConsumingState consumingState,
+			PlayerChargeRollState chargeRollState,
+			PlayerRollingState rollingState,
+			PlayerSlammingState slammingState) {
 			
 			this.Idle = idleState;
 			this.Jabbing = jabbingState;
 			this.Attenuate = attenuateState;
 			this.Bounding = boundingState;
 			this.Consuming = consumingState;
+			this.ChargeRoll = chargeRollState;
+			this.Rolling = rollingState;
+			this.Slamming = slammingState;
 		}
+	}
+	
+	public class MetaRegion {
+		public PlayerNormalState Normal { get; }
+		public PlayerCurledState Curled { get; }
+		
+		public MetaRegion(PlayerNormalState normalState,
+			PlayerCurledState curledState) {
+			
+			this.Normal = normalState;
+			this.Curled = curledState;
+			}
 	}
 	
 	public MovementRegion movementStates { get; private set; }
 	public ActionRegion actionStates { get; private set; }
+	public MetaRegion metaStates { get; private set; }
 	private PlayerMovementState currentMovement;
 	private PlayerActionState currentAction;
+	private PlayerMetaState currentMeta;
 
     // Update is called once per frame
     void Update()
@@ -78,12 +101,22 @@ public class PlayerStateMachine : MonoBehaviour
 		Debug.Log("Transiting to " + this.currentAction);
 	}
 	
+	public void MetaTransition(PlayerMetaState newState) {
+		this.currentMeta?.Exit();
+		this.currentMeta = newState;
+		this.currentMeta?.Enter();
+		Debug.Log("Transiting to " + this.currentMeta);
+	}
+	
 	// Input Control
 	public Vector3 inputDirection;
 	public bool movementAllowed = true;
 	[SerializeField] GameObject offenseGearWheel;
 	[SerializeField] GameObject defenseGearWheel;
 	private int inGearWheel = 0; // 0 = Not in Gear Wheel, 1 = Offense, 2 = Defense
+	public int equippedOffense { get; private set; } = 0;
+	public int equippedDefense { get; private set; } = 0;
+	
 	
 	public void OnMove(InputAction.CallbackContext context) {
 		Vector2 direction = context.ReadValue<Vector2>() * moveSpeed;
@@ -94,6 +127,7 @@ public class PlayerStateMachine : MonoBehaviour
 	public void OnJump(InputAction.CallbackContext context) {
 		if (!context.started) return;
 		Command command = new JumpCommand();
+		command = this.currentMeta.FilterCommand(command);
 		command = this.currentMovement.FilterCommand(command);
 		command = this.currentAction.FilterCommand(command);
 		command.execute(this.currentMovement, this.currentAction);
@@ -103,17 +137,24 @@ public class PlayerStateMachine : MonoBehaviour
 	}
 	
 	public void OnJab(InputAction.CallbackContext context) {
-		if (!context.started) return;
-		Command command = new JabCommand();
-		command = this.currentMovement.FilterCommand(command);
-		command = this.currentAction.FilterCommand(command);
-		command.execute(this.currentMovement, this.currentAction);
+		if (context.started) {
+			Command command = new JabCommand();
+			command = this.currentMeta.FilterCommand(command);
+			command = this.currentMovement.FilterCommand(command);
+			command = this.currentAction.FilterCommand(command);
+			command.execute(this.currentMovement, this.currentAction);
+		} else if (context.canceled) {
+			if (currentAction == actionStates.ChargeRoll) {
+				ActionTransition(actionStates.Rolling);
+			}
+		}
 	}
 	
 	public void OnAttenuate(InputAction.CallbackContext context) {
 		if (!context.started) return;
-		if (Time.time - actionStates.Attenuate.lastExit <= 1f) return;
+		if (Time.time - actionStates.Attenuate.lastExit <= 1f) return; // Move CD-checking to the States later
 		Command command = new AttenuateCommand();
+		command = this.currentMeta.FilterCommand(command);
 		command = this.currentMovement.FilterCommand(command);
 		command = this.currentAction.FilterCommand(command);
 		command.execute(this.currentMovement, this.currentAction);
@@ -122,9 +163,28 @@ public class PlayerStateMachine : MonoBehaviour
 	public void OnConsume(InputAction.CallbackContext context) {
 		if (!context.started) return;
 		Command command = new ConsumeCommand();
+		command = this.currentMeta.FilterCommand(command);
 		command = this.currentMovement.FilterCommand(command);
 		command = this.currentAction.FilterCommand(command);
 		command.execute(this.currentMovement, this.currentAction);
+	}
+	
+	public void OnHoldAction(InputAction.CallbackContext context) {
+		PlayerMetaState nextState = metaStates.Normal;
+		switch (equippedOffense) {
+			case 0:
+				break;
+			case 1:
+				nextState = metaStates.Curled;
+				break;
+			default:
+				break;
+		}
+		if (context.started) {
+			MetaTransition(nextState);
+		} else if (context.canceled) {
+			MetaTransition(metaStates.Normal);
+		}
 	}
 	
 	public void OnOffenseGearWheel(InputAction.CallbackContext context) {
@@ -148,7 +208,7 @@ public class PlayerStateMachine : MonoBehaviour
 			cam.GetComponent<CinemachineInputAxisController>().enabled = true;
 			// Update Offense
 			Debug.Log("Mode: " + offenseGearWheel.GetComponent<RadialMenu>().att);
-			// actionStates.Jabbing.modeSet(offenseGearWheel.GetComponent<RadialMenu>().att);
+			equippedOffense = offenseGearWheel.GetComponent<RadialMenu>().att;
 		}
 	}
 	public void OnDefenseGearWheel(InputAction.CallbackContext context) {
@@ -172,7 +232,7 @@ public class PlayerStateMachine : MonoBehaviour
 			cam.GetComponent<CinemachineInputAxisController>().enabled = true;
 			// Update Defense
 			Debug.Log("Mode: " + defenseGearWheel.GetComponent<RadialMenu>().att);
-			// actionStates.Jabbing.modeSet(offenseGearWheel.GetComponent<RadialMenu>().att);
+			equippedDefense = defenseGearWheel.GetComponent<RadialMenu>().att;
 		}
 	}
 	
@@ -222,7 +282,14 @@ public class PlayerStateMachine : MonoBehaviour
 			new PlayerJabbingState(this),
 			new PlayerAttenuateState(this),
 			new PlayerBoundingState(this),
-			new PlayerConsumingState(this)
+			new PlayerConsumingState(this),
+			new PlayerChargeRollState(this),
+			new PlayerRollingState(this),
+			new PlayerSlammingState(this)
+		);
+		this.metaStates = new MetaRegion(
+			new PlayerNormalState(this),
+			new PlayerCurledState(this)
 		);
 		this.inputDirection = Vector3.zero;
 		this.currentVelocity = Vector3.zero;
@@ -231,6 +298,7 @@ public class PlayerStateMachine : MonoBehaviour
 		this.animator = GetComponent<Animator>();
 		this.MovementTransition(movementStates.Grounded);
 		this.ActionTransition(actionStates.Idle);
+		this.MetaTransition(metaStates.Normal);
 		HP += maxHP;
 		
 		Cursor.visible = false;
