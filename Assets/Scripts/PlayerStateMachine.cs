@@ -14,14 +14,17 @@ public class PlayerStateMachine : MonoBehaviour
 		public PlayerGroundedState Grounded { get; }
 		public PlayerAirborneState Airborne { get; }
 		public PlayerBoundState Bound { get; }
+		public PlayerSlamState Slam { get; }
 		
 		public MovementRegion(PlayerGroundedState groundedState, 
 			PlayerAirborneState airborneState,
-			PlayerBoundState boundState) {
+			PlayerBoundState boundState,
+			PlayerSlamState slamState) {
 			
 			this.Grounded = groundedState;
 			this.Airborne = airborneState;
 			this.Bound = boundState;
+			this.Slam = slamState;
 		}
 	}
 	
@@ -135,15 +138,19 @@ public class PlayerStateMachine : MonoBehaviour
 	public void JumpHelper() {
 		currentVelocity.y = jumpSpeed;
 	}
-	
+
+	[SerializeField] public float jabRollLeniency = 0.05f;
+	public bool holdCheck = false;
 	public void OnJab(InputAction.CallbackContext context) {
 		if (context.started) {
+			if (this.currentMeta == metaStates.Curled) holdCheck = true;
 			Command command = new JabCommand();
 			command = this.currentMeta.FilterCommand(command);
 			command = this.currentMovement.FilterCommand(command);
 			command = this.currentAction.FilterCommand(command);
 			command.execute(this.currentMovement, this.currentAction);
 		} else if (context.canceled) {
+			holdCheck = false;
 			if (currentAction == actionStates.ChargeRoll) {
 				ActionTransition(actionStates.Rolling);
 			}
@@ -275,7 +282,8 @@ public class PlayerStateMachine : MonoBehaviour
         this.movementStates = new MovementRegion(
 			new PlayerGroundedState(this),
 			new PlayerAirborneState(this),
-			new PlayerBoundState(this)
+			new PlayerBoundState(this),
+			new PlayerSlamState(this)
 		);
 		this.actionStates = new ActionRegion(
 			new PlayerIdleState(this),

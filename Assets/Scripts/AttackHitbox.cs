@@ -6,6 +6,7 @@ public class AttackHitbox : MonoBehaviour
 	[SerializeField] GameObject owner;
 	
 	void OnTriggerEnter(Collider other) {
+		Debug.Log("Connected with " + other.gameObject);
 		if (other.gameObject.layer != LayerMask.NameToLayer("Enemy")) return;
 		other.GetComponent<EnemyAI>().takeDamage(attackData.damage);
 	}
