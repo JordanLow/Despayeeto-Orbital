@@ -2,11 +2,10 @@ using UnityEngine;
 
 public class AttackHitbox : MonoBehaviour
 {
-	[SerializeField] PlayerAttack attackData;
-	[SerializeField] GameObject owner;
+	[SerializeField] protected PlayerAttack attackData;
+	[SerializeField] protected GameObject owner;
 	
 	void OnTriggerEnter(Collider other) {
-		Debug.Log("Connected with " + other.gameObject);
 		if (other.gameObject.layer != LayerMask.NameToLayer("Enemy")) return;
 		other.GetComponent<EnemyAI>().takeDamage(attackData.damage);
 	}

@@ -139,22 +139,14 @@ public class PlayerStateMachine : MonoBehaviour
 		currentVelocity.y = jumpSpeed;
 	}
 
-	[SerializeField] public float jabRollLeniency = 0.05f;
-	public bool holdCheck = false;
 	public void OnJab(InputAction.CallbackContext context) {
-		if (context.started) {
-			if (this.currentMeta == metaStates.Curled) holdCheck = true;
-			Command command = new JabCommand();
-			command = this.currentMeta.FilterCommand(command);
-			command = this.currentMovement.FilterCommand(command);
-			command = this.currentAction.FilterCommand(command);
-			command.execute(this.currentMovement, this.currentAction);
-		} else if (context.canceled) {
-			holdCheck = false;
-			if (currentAction == actionStates.ChargeRoll) {
-				ActionTransition(actionStates.Rolling);
-			}
-		}
+		if (!context.started) return;
+		Command command = new JabCommand();
+		command = this.currentMeta.FilterCommand(command);
+		command = this.currentMovement.FilterCommand(command);
+		command = this.currentAction.FilterCommand(command);
+		command.execute(this.currentMovement, this.currentAction);
+	
 	}
 	
 	public void OnAttenuate(InputAction.CallbackContext context) {
@@ -168,12 +160,17 @@ public class PlayerStateMachine : MonoBehaviour
 	}
 	
 	public void OnConsume(InputAction.CallbackContext context) {
-		if (!context.started) return;
-		Command command = new ConsumeCommand();
-		command = this.currentMeta.FilterCommand(command);
-		command = this.currentMovement.FilterCommand(command);
-		command = this.currentAction.FilterCommand(command);
-		command.execute(this.currentMovement, this.currentAction);
+		if (context.started) {
+			Command command = new ConsumeCommand();
+			command = this.currentMeta.FilterCommand(command);
+			command = this.currentMovement.FilterCommand(command);
+			command = this.currentAction.FilterCommand(command);
+			command.execute(this.currentMovement, this.currentAction);
+		} else if (context.canceled) {
+			if (currentAction == actionStates.ChargeRoll) {
+				ActionTransition(actionStates.Rolling);
+			}
+		}
 	}
 	
 	public void OnHoldAction(InputAction.CallbackContext context) {

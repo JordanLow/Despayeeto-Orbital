@@ -135,6 +135,9 @@ public class PlayerAirborneState : PlayerMovementState
 		if (command is JumpCommand) {
 			return new BoundCommand();
 		}
+		if (command is ChargeRollCommand) {
+			return new SlamCommand();
+		}
 		return command;
 	}
 	
@@ -274,7 +277,6 @@ public class PlayerIdleState : PlayerActionState
 public class PlayerJabbingState : PlayerActionState
 {
 	public float jabEnterTime { get; private set; }
-	private bool checkedCancel = false;
 	private IAttackDelegate curAttack;
 	private IAttackDelegate[] attackSets;
 	private int qmode = 0;
@@ -289,7 +291,6 @@ public class PlayerJabbingState : PlayerActionState
 	}
 	
 	public override void Enter() {
-		checkedCancel = false;
 		// Snap to nearest enemy
 		Collider[] hits = Physics.OverlapSphere(FSM.transform.position, 1.6f, LayerMask.GetMask("Enemy"));
 		if (hits.Length >= 1) {
@@ -305,19 +306,7 @@ public class PlayerJabbingState : PlayerActionState
 	}
 	
 	public override void Exit() {
-		checkedCancel = false;
 		FSM.movementAllowed = true;
-	}
-	
-	public override void Tick() {
-		if (Time.time - jabEnterTime >= FSM.jabRollLeniency && !checkedCancel) {
-			if (!FSM.holdCheck) {
-				checkedCancel = true;
-			} else {
-				FSM.actionStates.Idle.actionQueue = FSM.actionStates.ChargeRoll;
-				FSM.animator.Play("EmptyAnimanim", 1);
-			}
-		}
 	}
 
 	public override void OnJabCommand() {
@@ -438,27 +427,22 @@ public class PlayerChargeRollState : PlayerActionState
 public class PlayerRollingState : PlayerActionState
 {
 	public float power;
-	private Collider hitbox; // Handled here rather than animations due to looping nature of roll
 	
-	public PlayerRollingState(PlayerStateMachine ctx) : base(ctx) {
-		hitbox = FSM.transform.Find("Hitboxes/Roll Hitbox").GetComponent<Collider>();
-	}
+	public PlayerRollingState(PlayerStateMachine ctx) : base(ctx) {	}
 	
 	public override void Enter() {
 		FSM.movementAllowed = false;
-		hitbox.enabled = true;
 		FSM.animator.Play("Roll", 1);
 		// Lock onto some nearby enemy, probably with a dynamically updating direction
 	}
 	
 	public override void Exit() {
-		hitbox.enabled = false;
 		FSM.animator.Play("EmptyAnimanim", 1);
 		FSM.movementAllowed = true;
 	}
 	
 	public override void Tick() {
-		// Enable some rolling hitbox
+		// Process Pings and Enemy contact I guess
 		FSM.controller.Move(FSM.transform.forward * power * 5f * Time.deltaTime);
 	}
 	
@@ -503,11 +487,8 @@ public class PlayerCurledState : PlayerMetaState
 	}
 	
 	public override Command FilterCommand(Command command) {
-		//if (command is JabCommand) {
-			//return new ChargeRollCommand();
-		//}
 		if (command is ConsumeCommand) {
-			return new SlamCommand();
+			return new ChargeRollCommand();
 		}
 		return command;
 	}
