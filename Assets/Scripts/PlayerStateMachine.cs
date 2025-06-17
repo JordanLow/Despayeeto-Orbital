@@ -146,7 +146,15 @@ public class PlayerStateMachine : MonoBehaviour
 		command = this.currentMovement.FilterCommand(command);
 		command = this.currentAction.FilterCommand(command);
 		command.execute(this.currentMovement, this.currentAction);
-	
+	}
+	public void RollCollideHelper(GameObject other) {
+		if (currentAction == actionStates.Rolling) {
+			// Play animation and link state exit to machine rider?
+			// If I can actually make the damn animations work zzzz
+			// For now this shall suffice
+			actionStates.Rolling.lastHit = other;
+			ActionTransition(actionStates.Idle);
+		}
 	}
 	
 	public void OnAttenuate(InputAction.CallbackContext context) {

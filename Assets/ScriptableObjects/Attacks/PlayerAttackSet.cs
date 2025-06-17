@@ -4,5 +4,5 @@ using UnityEngine;
 public class PlayerAttackSet : ScriptableObject
 {
     public PlayerCombo jabCombo;
-	public PlayerAttack placeholderAttackLeaveNull;
+	public PlayerCombo largeJabCombo;
 }

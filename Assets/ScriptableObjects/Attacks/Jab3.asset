@@ -14,4 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animationClip: {fileID: 7400000, guid: 2502f5e219af0784193e39d7d78548c5, type: 2}
   damage: 10
+  stun: 0.4
   attackName: Jab3

@@ -22,6 +22,7 @@ public class EnemyAI : MonoBehaviour
 		Chasing,
 		Attacking,
 		Bounded,
+		Stunned,
 		Dead
 	}
 	
@@ -29,6 +30,7 @@ public class EnemyAI : MonoBehaviour
 	private float curLimit = 0f;
 	private float rLimit = 0.4f;
 	private float timeDied = 0f;
+	public float stunDuration = 0f;
 	
 	void Start()
 	{
@@ -49,12 +51,26 @@ public class EnemyAI : MonoBehaviour
 			animator.Play("Deflate");
 			rb.detectCollisions = false;
 		}
-		if (state == State.Bounded || state == State.Attacking) {
-			return;
-		}
 		if (state == State.Dead) {
 			timeDied += Time.fixedDeltaTime;
 			if (timeDied > 2f) Destroy(gameObject);
+			return;
+		}
+		if (stunDuration > 0f && state != State.Stunned) {
+			animator.Play("EmptyAnimanim"); // Placeholder for actual stun animation
+			state = State.Stunned;
+			return;
+		}
+		if (state == State.Stunned) {
+			stunDuration -= Time.fixedDeltaTime;
+			if (stunDuration <= 0f) {
+				stunDuration = 0f;
+				state = State.Wandering;
+			} else {
+				return;
+			}
+		}
+		if (state == State.Bounded || state == State.Attacking) {
 			return;
 		}
 		RaycastHit hit;
@@ -164,7 +180,10 @@ public class EnemyAI : MonoBehaviour
 		Debug.Log("Enemy State: " + state);
 	}
 	
-	public void takeDamage(float dmg) {
+	public void takeDamage(float dmg, float stunLength) {
+		if (stunLength > stunDuration) {
+			stunDuration = stunLength;
+		}
 		HP -= dmg;
 	}
 	
