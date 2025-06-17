@@ -22,20 +22,3 @@ public class BasicChainDelegate : IAttackDelegate
 		comboStage = (comboStage + 1) % 3;
 	}
 }
-
-public class GentlemanDelegate : IAttackDelegate
-{
-	public bool isFinished { get; private set; } = false;
-	private PlayerStateMachine ctx;
-
-	public async void Execute(PlayerStateMachine curCtx) {
-		Debug.Log("Deprecated Attack");
-		await Task.Delay(TimeSpan.FromSeconds(1f));
-		FinishAttack();
-	}
-
-
-	private void FinishAttack() {
-		Debug.Log("Get off this mode");
-	}
-}

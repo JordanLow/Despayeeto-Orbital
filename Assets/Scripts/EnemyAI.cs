@@ -168,11 +168,15 @@ public class EnemyAI : MonoBehaviour
 		HP -= dmg;
 	}
 	
-	public bool attemptConsume() {
+	public bool AttemptConsume() {
 		if (HP <= Devourable) {
 			Destroy(gameObject);
 			return true;
 		}
 		return false;
+	}
+	
+	public virtual void UnlockPower() {
+		
 	}
 }

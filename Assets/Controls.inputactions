@@ -15,6 +15,15 @@
                     "initialStateCheck": true
                 },
                 {
+                    "name": "Pause Menu",
+                    "type": "Button",
+                    "id": "0e192ac6-eaac-4ec5-b172-bf764d3bdc9b",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Jump",
                     "type": "Button",
                     "id": "d8900a27-45d4-465b-bd21-dae37503f2ff",
@@ -42,9 +51,18 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "GearWheel",
+                    "name": "OffenseGearWheel",
                     "type": "Button",
                     "id": "dd050036-3c4a-46e5-845d-3c93a5343f62",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "DefenseGearWheel",
+                    "type": "Button",
+                    "id": "803666d4-23a6-4819-99b4-008e9c5b028c",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -67,6 +85,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "HoldAction",
+                    "type": "Button",
+                    "id": "cc699afc-5f35-4616-a7f5-27ba8adcd8e9",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -138,6 +165,17 @@
                 },
                 {
                     "name": "",
+                    "id": "a3e45bc3-078c-431a-8460-0c6378415201",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";MnK",
+                    "action": "Pause Menu",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "a54c003c-316e-491f-ac52-050ae42e27ce",
                     "path": "<Keyboard>/space",
                     "interactions": "",
@@ -187,18 +225,40 @@
                     "interactions": "Hold",
                     "processors": "",
                     "groups": ";MnK",
-                    "action": "GearWheel",
+                    "action": "OffenseGearWheel",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
                     "id": "c4f2eb38-a51a-472b-9248-61d2364572c1",
+                    "path": "<Gamepad>/rightShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Controller",
+                    "action": "OffenseGearWheel",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "44bfa4c2-f471-408a-a154-441a699433e2",
+                    "path": "<Keyboard>/q",
+                    "interactions": "Hold",
+                    "processors": "",
+                    "groups": ";MnK",
+                    "action": "DefenseGearWheel",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ec42e607-65a0-4038-8669-5a3461c6ba0e",
                     "path": "<Gamepad>/leftShoulder",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Controller",
-                    "action": "GearWheel",
+                    "action": "DefenseGearWheel",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -265,6 +325,98 @@
                     "processors": "",
                     "groups": ";Controller",
                     "action": "Attenuate",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b0254dc7-9301-41fd-9e18-25f023754397",
+                    "path": "<Keyboard>/shift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";MnK",
+                    "action": "HoldAction",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "9709e71a-8b16-4dae-93e1-f4162559ad8c",
+                    "path": "<Gamepad>/leftTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Controller",
+                    "action": "HoldAction",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "UI",
+            "id": "bc4ef0b1-20c5-4bfd-a86d-b721838d7189",
+            "actions": [
+                {
+                    "name": "Navigate",
+                    "type": "Value",
+                    "id": "9d2613dd-4541-4919-8ef4-fe360833c3ed",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Submit",
+                    "type": "Button",
+                    "id": "4e999362-224c-4d48-adea-a1f813c83e61",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "2D Vector",
+                    "id": "4f1278c9-ad81-454f-9137-6af099780e63",
+                    "path": "2DVector",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Navigate",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "up",
+                    "id": "d32904d0-56ba-4cfd-bb82-07c541c26691",
+                    "path": "<Keyboard>/w",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";MnK",
+                    "action": "Navigate",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "down",
+                    "id": "2eb64993-abc6-40cc-9314-fd3cfdeec8e2",
+                    "path": "<Keyboard>/s",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";MnK",
+                    "action": "Navigate",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "b9a87997-1ace-44cd-b893-3db30a0a4ee5",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";MnK",
+                    "action": "Submit",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

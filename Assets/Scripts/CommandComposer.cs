@@ -51,3 +51,19 @@ public class ConsumeCommand : Command
 		actionState.OnConsumeCommand();
 	}
 }
+
+public class ChargeRollCommand : Command
+{
+	public void execute(PlayerMovementState movementState, PlayerActionState actionState) {
+		movementState.OnChargeRollCommand();
+		actionState.OnChargeRollCommand();
+	}
+}
+
+public class SlamCommand : Command
+{
+	public void execute(PlayerMovementState movementState, PlayerActionState actionState) {
+		movementState.OnSlamCommand();
+		actionState.OnSlamCommand();
+	}
+}
