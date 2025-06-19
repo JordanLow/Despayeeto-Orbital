@@ -61,12 +61,15 @@ public class PlayerStateMachine : MonoBehaviour
 	public class MetaRegion {
 		public PlayerNormalState Normal { get; }
 		public PlayerCurledState Curled { get; }
+		public PlayerLockdownState Lockdown { get; }
 		
 		public MetaRegion(PlayerNormalState normalState,
-			PlayerCurledState curledState) {
+			PlayerCurledState curledState,
+			PlayerLockdownState lockdownState) {
 			
 			this.Normal = normalState;
 			this.Curled = curledState;
+			this.Lockdown = lockdownState;
 			}
 	}
 	
@@ -189,6 +192,9 @@ public class PlayerStateMachine : MonoBehaviour
 			case 1:
 				nextState = metaStates.Curled;
 				break;
+			case 2:
+				nextState = metaStates.Lockdown;
+				break;
 			default:
 				break;
 		}
@@ -302,7 +308,8 @@ public class PlayerStateMachine : MonoBehaviour
 		);
 		this.metaStates = new MetaRegion(
 			new PlayerNormalState(this),
-			new PlayerCurledState(this)
+			new PlayerCurledState(this),
+			new PlayerLockdownState(this)
 		);
 		this.inputDirection = Vector3.zero;
 		this.currentVelocity = Vector3.zero;

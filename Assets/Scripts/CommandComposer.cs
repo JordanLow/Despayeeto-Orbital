@@ -67,3 +67,11 @@ public class SlamCommand : Command
 		actionState.OnSlamCommand();
 	}
 }
+
+public class SpineCommand : Command
+{
+	public void execute(PlayerMovementState movementState, PlayerActionState actionState) {
+		movementState.OnSpineCommand();
+		actionState.OnSpineCommand();
+	}
+}

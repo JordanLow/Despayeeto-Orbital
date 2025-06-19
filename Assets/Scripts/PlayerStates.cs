@@ -15,6 +15,7 @@ public abstract class PlayerState
 	public virtual void OnConsumeCommand() { }
 	public virtual void OnChargeRollCommand() { }
 	public virtual void OnSlamCommand() { }
+	public virtual void OnSpineCommand() { }
 }
 
 public abstract class PlayerMovementState : PlayerState
@@ -104,7 +105,7 @@ public class PlayerGroundedState : PlayerMovementState
 
 	public override void OnJumpCommand() {
 		isJumping = true;
-		FSM.animator.Play("BounceSquish");
+		FSM.animator.Play("BounceSquish", 1);
 	}
 }
 
@@ -125,7 +126,7 @@ public class PlayerAirborneState : PlayerMovementState
 		//if (FSM.controller.isGrounded
 		&& Time.time - jumpEnterTime > minimumAirborneTime) {
 			FSM.MovementTransition(FSM.movementStates.Grounded);
-			FSM.animator.Play("Land");
+			FSM.animator.Play("Land", 1);
 		}
 	}
 	
@@ -264,6 +265,16 @@ public class PlayerIdleState : PlayerActionState
 		FSM.ActionTransition(FSM.actionStates.Slamming);
 	}
 	
+	public override void OnSpineCommand() {
+		GameObject spine = Transform.Instantiate(FSM.attackProfile.spineProjectile, FSM.transform.position + new Vector3(0f, 0.2f, 0f), Quaternion.identity);
+		Collider[] hits = Physics.OverlapSphere(FSM.transform.position, 12f, LayerMask.GetMask("Enemy"));
+		if (hits.Length >= 1) {
+			Vector3 enemyDir = hits[0].transform.position - FSM.transform.position;
+			Debug.Log("Enemy at " + enemyDir);
+			spine.transform.rotation = Quaternion.LookRotation(Vector3.Cross(Vector3.forward, enemyDir), enemyDir);
+		}
+	}
+	
 	public override void Tick() {
 		if (actionQueue != null) {
 			FSM.ActionTransition(actionQueue);
@@ -274,13 +285,13 @@ public class PlayerIdleState : PlayerActionState
 
 public class PlayerJabbingState : PlayerActionState
 {
-	public float jabEnterTime { get; private set; }
+	// public float jabEnterTime { get; private set; }
 	private IAttackDelegate curAttack;
 	private IAttackDelegate[] attackSets;
 	private int qmode = 0;
 
 	public PlayerJabbingState(PlayerStateMachine ctx) : base(ctx) {
-		attackSets = new IAttackDelegate[2] { new BasicChainDelegate(), new LargeChainDelegate() };
+		attackSets = new IAttackDelegate[3] { new BasicChainDelegate(), new LargeChainDelegate(), new PierceChainDelegate() };
 		curAttack = attackSets[0];
 	}
 	
@@ -297,7 +308,8 @@ public class PlayerJabbingState : PlayerActionState
 			FSM.transform.rotation = Quaternion.LookRotation(enemyDir);
 			FSM.controller.Move(enemyDir * Mathf.Max(0, enemyDir.magnitude - 1.3f));
 		}
-		jabEnterTime = Time.time;
+		// jabEnterTime = Time.time;
+		if (FSM.equippedOffense == 2) qmode = 2;
 		curAttack = attackSets[qmode];
 		FSM.movementAllowed = false;
 		curAttack.Execute(FSM);
@@ -408,7 +420,7 @@ public class PlayerChargeRollState : PlayerActionState
 	
 	public override void Enter() {
 		FSM.movementAllowed = false;
-		FSM.animator.Play("ChargeRoll", 1);
+		FSM.animator.Play("ChargeRoll", 2);
 		chargeTime = 0f;
 	}
 	
@@ -435,7 +447,7 @@ public class PlayerRollingState : PlayerActionState
 		pingBuffer = Time.time - 3f;
 		FSM.movementAllowed = false;
 		// TODO: Make it directionally biased (favoured to target enemies in stick direction)
-		Collider[] hits = Physics.OverlapSphere(FSM.transform.position, 18f, LayerMask.GetMask("Enemy"));
+		Collider[] hits = Physics.OverlapSphere(FSM.transform.position, 12f, LayerMask.GetMask("Enemy"));
 		if (hits.Length >= 2 || (hits.Length == 1 && hits[0].gameObject != lastHit)) {
 			int idx = 0;
 			if (hits[idx].gameObject == lastHit) idx = 1;
@@ -445,7 +457,7 @@ public class PlayerRollingState : PlayerActionState
 		} else {
 			FSM.transform.rotation = FSM.transform.rotation * Quaternion.Euler(0, 180, 0);
 		}
-		if (!pingedFrom) FSM.animator.Play("Roll", 1);
+		if (!pingedFrom) FSM.animator.Play("Pre-Roll", 1);
 		pingedFrom = false;
 	}
 	
@@ -456,7 +468,7 @@ public class PlayerRollingState : PlayerActionState
 			FSM.animator.Play("Pingtest", 1);
 			pingedFrom = true;
 		} else {
-			FSM.animator.Play("EmptyAnimanim", 1);
+			FSM.animator.Play("Idle", 1);
 		}
 	}
 	
@@ -528,7 +540,7 @@ public class PlayerCurledState : PlayerMetaState
 	public PlayerCurledState(PlayerStateMachine ctx) : base(ctx) { }
 	
 	public override void Enter() {
-		FSM.animator.Play("Curl", 2);
+		FSM.animator.Play("Curl", 0);
 		FSM.actionStates.Jabbing.ModeSet(1);
 	}
 	
@@ -542,10 +554,11 @@ public class PlayerCurledState : PlayerMetaState
 		// The latter probably requires some re-factoring to allow for selective canceling of Roll/Slam
 		// Plus clarification on Attenuate and other gear wheel stuff
 		//// Right now, just force-cancel everything
-		FSM.animator.Play("EmptyAnimanim", 1);
+		FSM.animator.Play("EmptyAnimanim", 2);
+		FSM.animator.Play("Idle", 1);
 		FSM.ActionTransition(FSM.actionStates.Idle);
 		// For some reason the Unity animator sucks with scale so I'm fixing it here
-		FSM.animator.Play("Uncurl", 2);
+		FSM.animator.Play("Uncurl", 0);
 	}
 	
 	public override Command FilterCommand(Command command) {
@@ -553,5 +566,32 @@ public class PlayerCurledState : PlayerMetaState
 			return new ChargeRollCommand();
 		}
 		return command;
+	}
+}
+
+public class PlayerLockdownState : PlayerMetaState
+{
+	public PlayerLockdownState(PlayerStateMachine ctx) : base(ctx) { }
+	
+	public override void Enter() {
+		FSM.animator.Play("Lockdown", 0);
+		FSM.movementAllowed = false;
+	}
+	
+	public override void Exit() {
+		FSM.movementStates.Grounded.slamQueued = false;
+		FSM.actionStates.Idle.actionQueue = null;
+		FSM.MovementTransition(FSM.movementStates.Grounded);
+		FSM.animator.Play("EmptyAnimanim", 2);
+		FSM.ActionTransition(FSM.actionStates.Idle);
+		FSM.movementAllowed = true;
+		FSM.animator.Play("Un-Lockdown", 0);
+	}
+	
+	public override Command FilterCommand(Command command) {
+		if (command is JabCommand) {
+			return new SpineCommand();
+		}
+		return new VoidCommand();
 	}
 }
