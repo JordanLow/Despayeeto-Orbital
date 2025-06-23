@@ -16,6 +16,7 @@ public abstract class PlayerState
 	public virtual void OnChargeRollCommand() { }
 	public virtual void OnSlamCommand() { }
 	public virtual void OnSpineCommand() { }
+	public virtual void OnImpaleCommand() { } 
 }
 
 public abstract class PlayerMovementState : PlayerState
@@ -275,6 +276,10 @@ public class PlayerIdleState : PlayerActionState
 		}
 	}
 	
+	public override void OnImpaleCommand() {
+		FSM.ActionTransition(FSM.actionStates.Impaling);
+	}
+	
 	public override void Tick() {
 		if (actionQueue != null) {
 			FSM.ActionTransition(actionQueue);
@@ -468,7 +473,7 @@ public class PlayerRollingState : PlayerActionState
 			FSM.animator.Play("Pingtest", 1);
 			pingedFrom = true;
 		} else {
-			FSM.animator.Play("Idle", 1);
+			FSM.animator.Play("Unroll", 1);
 		}
 	}
 	
@@ -483,13 +488,16 @@ public class PlayerRollingState : PlayerActionState
 			FSM.actionStates.Idle.actionQueue = null;
 		}
 	}
-	
-	public override void OnJumpCommand() {
-		FSM.ActionTransition(FSM.actionStates.Idle);
-	}
-	
+
 	public override void OnJabCommand() {
 		pingBuffer = Time.time;
+	}
+	
+	public override Command FilterCommand(Command command) {
+		if (command is JumpCommand) {
+			return new VoidCommand();
+		}
+		return command;
 	}
 }
 
@@ -523,6 +531,27 @@ public class PlayerSlammingState : PlayerActionState
 
 	public override void OnJabCommand() {
 		pingBuffer = Time.time;
+	}
+}
+
+public class PlayerImpalingState : PlayerActionState
+{
+	private float impaleCharge;
+	
+	public PlayerImpalingState(PlayerStateMachine ctx) : base(ctx) { }
+	
+	public override void Enter() {
+		impaleCharge = Time.time;
+	}
+	
+	public override void Exit() {
+		if (Time.time - impaleCharge >= 1f) {
+			Collider[] hits = Physics.OverlapSphere(FSM.transform.position, 10f, LayerMask.GetMask("Enemy"));			
+			for (int i = 0; i < hits.Length; i++) {
+				GameObject impaleSeeker = Transform.Instantiate(FSM.attackProfile.impaleSeeker, FSM.transform.position, Quaternion.identity);
+				impaleSeeker.GetComponent<ImpaleSeeker>().target = hits[i].gameObject;
+			}
+		}
 	}
 }
 
@@ -591,6 +620,9 @@ public class PlayerLockdownState : PlayerMetaState
 	public override Command FilterCommand(Command command) {
 		if (command is JabCommand) {
 			return new SpineCommand();
+		}
+		if (command is ConsumeCommand) {
+			return new ImpaleCommand();
 		}
 		return new VoidCommand();
 	}

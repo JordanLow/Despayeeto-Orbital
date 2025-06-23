@@ -83,9 +83,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8683cac3c9cba60498018ad8004073e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 5
+  attackData: {fileID: 11400000, guid: 70131dc1692411d45b174f85ab8f4948, type: 2}
+  owner: {fileID: 0}
   speed: 6
-  stunDuration: 0.1
 --- !u!54 &7472915773567246276
 Rigidbody:
   m_ObjectHideFlags: 0

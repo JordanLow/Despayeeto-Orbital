@@ -37,6 +37,7 @@ public class PlayerStateMachine : MonoBehaviour
 		public PlayerChargeRollState ChargeRoll { get; }
 		public PlayerRollingState Rolling { get; }
 		public PlayerSlammingState Slamming { get; }
+		public PlayerImpalingState Impaling { get; }
 		
 		public ActionRegion(PlayerIdleState idleState,
 			PlayerJabbingState jabbingState,
@@ -45,7 +46,8 @@ public class PlayerStateMachine : MonoBehaviour
 			PlayerConsumingState consumingState,
 			PlayerChargeRollState chargeRollState,
 			PlayerRollingState rollingState,
-			PlayerSlammingState slammingState) {
+			PlayerSlammingState slammingState,
+			PlayerImpalingState impalingState) {
 			
 			this.Idle = idleState;
 			this.Jabbing = jabbingState;
@@ -55,6 +57,7 @@ public class PlayerStateMachine : MonoBehaviour
 			this.ChargeRoll = chargeRollState;
 			this.Rolling = rollingState;
 			this.Slamming = slammingState;
+			this.Impaling = impalingState;
 		}
 	}
 	
@@ -181,6 +184,9 @@ public class PlayerStateMachine : MonoBehaviour
 			if (currentAction == actionStates.ChargeRoll) {
 				ActionTransition(actionStates.Rolling);
 			}
+			if (currentAction == actionStates.Impaling) {
+				ActionTransition(actionStates.Idle);
+			}
 		}
 	}
 	
@@ -304,7 +310,8 @@ public class PlayerStateMachine : MonoBehaviour
 			new PlayerConsumingState(this),
 			new PlayerChargeRollState(this),
 			new PlayerRollingState(this),
-			new PlayerSlammingState(this)
+			new PlayerSlammingState(this),
+			new PlayerImpalingState(this)
 		);
 		this.metaStates = new MetaRegion(
 			new PlayerNormalState(this),

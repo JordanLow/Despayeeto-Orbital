@@ -1,10 +1,8 @@
 using UnityEngine;
 
-public class SpineHitbox : MonoBehaviour
+public class SpineHitbox : AttackHitbox
 {
-	[SerializeField] private float damage;
 	[SerializeField] private float speed;
-	[SerializeField] private float stunDuration;
 
     // Update is called once per frame
     void Update() {
@@ -13,7 +11,7 @@ public class SpineHitbox : MonoBehaviour
 	
 	void OnTriggerEnter(Collider other) {
         if (other.gameObject.layer != LayerMask.NameToLayer("Enemy")) return;
-        other.GetComponent<EnemyAI>().takeDamage(damage, stunDuration);
+        other.GetComponent<EnemyAI>().takeDamage(attackData.damage, attackData.stun);
 		Destroy(gameObject);
     }
 }
