@@ -1,4 +1,6 @@
 using UnityEngine;
+using System;
+using Unity.Cinemachine;
 
 public abstract class PlayerState
 {
@@ -17,6 +19,8 @@ public abstract class PlayerState
 	public virtual void OnSlamCommand() { }
 	public virtual void OnSpineCommand() { }
 	public virtual void OnImpaleCommand() { } 
+	public virtual void OnGrabCommand() { }
+	public virtual void OnYankCommand() { }
 }
 
 public abstract class PlayerMovementState : PlayerState
@@ -107,6 +111,72 @@ public class PlayerGroundedState : PlayerMovementState
 	public override void OnJumpCommand() {
 		isJumping = true;
 		FSM.animator.Play("BounceSquish", 1);
+	}
+}
+
+public class PlayerAimingState : PlayerMovementState
+{
+	private float currentPitch;
+	
+	public PlayerAimingState(PlayerStateMachine ctx) : base(ctx) { }
+	
+	public override void Enter() {
+		FSM.animator.SetBool("GroundedMoving", false);
+		currentPitch = 0f;
+		FSM.aimAnchor.transform.localEulerAngles = Vector3.zero;
+		Vector3 camForward = FSM.cam.transform.forward;
+		camForward.y = 0;
+		FSM.transform.rotation = Quaternion.LookRotation(camForward);
+	}
+	
+	public override void Tick() {
+		// Aim the Camera/Player Rotation
+		float mouseX = Input.GetAxis("Mouse X");
+		float mouseY = Input.GetAxis("Mouse Y");
+        currentPitch -= mouseY * 2f;
+        currentPitch = Mathf.Clamp(currentPitch, -20f, 30f);
+        FSM.aimAnchor.transform.localEulerAngles = new Vector3(currentPitch, 0f, 0f);
+		FSM.transform.Rotate(Vector3.up * mouseX * 2f);
+		Vector3 inputDirection = FSM.movementAllowed ? FSM.inputDirection : Vector3.zero;
+		Vector3 currentVelocity = FSM.currentVelocity;
+		if (currentVelocity.y > Physics.gravity.y) currentVelocity.y += Physics.gravity.y * Time.deltaTime;
+		inputDirection = inputDirection.z * FSM.transform.forward + inputDirection.x * FSM.transform.right;
+		inputDirection.y = currentVelocity.y;
+		FSM.currentVelocity = inputDirection;
+		FSM.controller.Move(FSM.currentVelocity * Time.deltaTime * 0.4f);
+		/* // From Player  
+		
+		RaycastHit[] hits = Physics.SphereCastAll(FSM.transform.position, 1.4f, FSM.cam.transform.forward, 40f, LayerMask.GetMask("Enemy"));
+		Vector3 aimPoint = FSM.aimCam.State.ReferenceLookAt;
+		if (hits.Length > 0) {
+			Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+			aimPoint = hits[0].transform.position;
+		} */
+		
+		// From Camera
+		Vector2 screenCenter = new Vector2(Screen.width / 2f, Screen.height / 2f);
+		Ray ray = Camera.main.ScreenPointToRay(screenCenter);
+		Vector3 aimPoint = FSM.aimCam.State.ReferenceLookAt;
+		RaycastHit[] hits = Physics.SphereCastAll(ray, 1.2f, 40f, LayerMask.GetMask("Enemy"));
+		FSM.actionStates.Grabbing.target = null;
+		if (hits.Length > 0) {
+			Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+			aimPoint = hits[0].transform.position;
+			aimPoint.y += 0.15f;
+			FSM.actionStates.Grabbing.target = hits[0].collider.gameObject;
+			FSM.actionStates.Yanking.target = hits[0].collider.gameObject;
+		}
+		Vector3 screenPoint = FSM.cam.WorldToScreenPoint(aimPoint);
+		FSM.reticle.position = screenPoint;
+	}
+	
+	public override void OnGrabCommand() {
+		FSM.MetaTransition(FSM.metaStates.Normal);
+	}
+	
+	public override void OnYankCommand() {
+		FSM.MetaTransition(FSM.metaStates.Normal);
+		// currentTarget.GetComponent<EnemyAI>()?.AttemptYank(FSM);
 	}
 }
 
@@ -280,6 +350,14 @@ public class PlayerIdleState : PlayerActionState
 		FSM.ActionTransition(FSM.actionStates.Impaling);
 	}
 	
+	public override void OnGrabCommand() {
+		FSM.ActionTransition(FSM.actionStates.Grabbing);
+	}
+	
+	public override void OnYankCommand() {
+		FSM.ActionTransition(FSM.actionStates.Yanking);
+	}
+	
 	public override void Tick() {
 		if (actionQueue != null) {
 			FSM.ActionTransition(actionQueue);
@@ -296,7 +374,10 @@ public class PlayerJabbingState : PlayerActionState
 	private int qmode = 0;
 
 	public PlayerJabbingState(PlayerStateMachine ctx) : base(ctx) {
-		attackSets = new IAttackDelegate[3] { new BasicChainDelegate(), new LargeChainDelegate(), new PierceChainDelegate() };
+		attackSets = new IAttackDelegate[4] { new BasicChainDelegate(), 
+			new LargeChainDelegate(), 
+			new PierceChainDelegate(),
+			new SlashChainDelegate() };
 		curAttack = attackSets[0];
 	}
 	
@@ -314,8 +395,9 @@ public class PlayerJabbingState : PlayerActionState
 			FSM.controller.Move(enemyDir * Mathf.Max(0, enemyDir.magnitude - 1.3f));
 		}
 		// jabEnterTime = Time.time;
-		if (FSM.equippedOffense == 2) qmode = 2;
 		curAttack = attackSets[qmode];
+		if (FSM.equippedOffense == 2) curAttack = attackSets[2];
+		if (FSM.equippedOffense == 3) curAttack = attackSets[3];
 		FSM.movementAllowed = false;
 		curAttack.Execute(FSM);
 	}
@@ -445,6 +527,7 @@ public class PlayerRollingState : PlayerActionState
 	private float pingBuffer;
 	private bool pingedFrom = false;
 	public GameObject lastHit;
+	public float lastHitTime;
 	
 	public PlayerRollingState(PlayerStateMachine ctx) : base(ctx) {	}
 	
@@ -486,6 +569,9 @@ public class PlayerRollingState : PlayerActionState
 			FSM.actionStates.Idle.actionQueue = FSM.actionStates.Rolling;
 		} else {
 			FSM.actionStates.Idle.actionQueue = null;
+		}
+		if (lastHit != null && Time.time - lastHitTime >= 0.3f) {
+			lastHit = null;
 		}
 	}
 
@@ -555,6 +641,44 @@ public class PlayerImpalingState : PlayerActionState
 	}
 }
 
+public class PlayerGrabbingState : PlayerActionState
+{
+	public GameObject target;
+	
+	public PlayerGrabbingState(PlayerStateMachine ctx) : base(ctx) { }
+	
+	public override void Enter() {
+		FSM.movementAllowed = false;
+		if (target != null) {
+			FSM.transform.rotation = Quaternion.LookRotation(target.transform.position - FSM.transform.position);
+		}
+		FSM.animator.Play("Grab", 2);
+	}
+	
+	public override void Exit() {
+		FSM.movementAllowed = true;
+	}
+}
+
+public class PlayerYankingState : PlayerActionState
+{
+	public GameObject target;
+	
+	public PlayerYankingState(PlayerStateMachine ctx) : base(ctx) { }
+	
+	public override void Enter() {
+		FSM.movementAllowed = false;
+		if (target != null) {
+			FSM.transform.rotation = Quaternion.LookRotation(target.transform.position - FSM.transform.position);
+		}
+		FSM.animator.Play("Yank", 2);
+	}
+	
+	public override void Exit() {
+		FSM.movementAllowed = true;
+	}
+}
+
 public class PlayerNormalState : PlayerMetaState
 {
 	public PlayerNormalState(PlayerStateMachine ctx) : base(ctx) { }
@@ -604,6 +728,7 @@ public class PlayerLockdownState : PlayerMetaState
 	
 	public override void Enter() {
 		FSM.animator.Play("Lockdown", 0);
+		FSM.ActionTransition(FSM.actionStates.Idle);
 		FSM.movementAllowed = false;
 	}
 	
@@ -623,6 +748,37 @@ public class PlayerLockdownState : PlayerMetaState
 		}
 		if (command is ConsumeCommand) {
 			return new ImpaleCommand();
+		}
+		return new VoidCommand();
+	}
+}
+
+public class PlayerAimState : PlayerMetaState
+{
+	public PlayerAimState(PlayerStateMachine ctx) : base(ctx) { }
+	
+	public override void Enter() {
+		FSM.MovementTransition(FSM.movementStates.Aiming);
+		FSM.SetCam(1);
+		FSM.reticle.gameObject.SetActive(true);
+	}
+	
+	public override void Exit() {
+		FSM.SetCam(0);
+		FSM.reticle.gameObject.SetActive(false);
+		FSM.movementStates.Grounded.slamQueued = false;
+		FSM.actionStates.Idle.actionQueue = null;
+		FSM.MovementTransition(FSM.movementStates.Grounded);
+		FSM.animator.Play("EmptyAnimanim", 2);
+		FSM.ActionTransition(FSM.actionStates.Idle);
+	}
+	
+	public override Command FilterCommand(Command command) {
+		if (command is JabCommand) {
+			return new GrabCommand();
+		}
+		if (command is ConsumeCommand) {
+			return new YankCommand();
 		}
 		return new VoidCommand();
 	}

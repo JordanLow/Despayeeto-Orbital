@@ -21,7 +21,6 @@ public class RadialMenu : MonoBehaviour
 		foreach (Transform child in transform) {
 			if (!child.gameObject.activeInHierarchy) continue;
 			count++;
-			Debug.Log(child.gameObject);
             buttons.Add(child.gameObject);
 		}
 		for (int i = 0; i < count; i++)
@@ -38,8 +37,9 @@ public class RadialMenu : MonoBehaviour
 		Vector2 dir = context.ReadValue<Vector2>();
 		if (dir.magnitude < 5f) return;;
 		float angle = Mathf.Atan2(dir.y, dir.x);
-		angle = (angle + (5*Mathf.PI / 2)) % (2 * Mathf.PI); // Normalize to [0, 2π]
-		att = Mathf.FloorToInt(angle / (2 * Mathf.PI / this.count));
+		if (angle < 0) angle = 2 * Mathf.PI + angle;
+		att = Mathf.FloorToInt(((angle + (Mathf.PI / this.count)) % (2 * Mathf.PI)) / (2 * Mathf.PI / this.count));
+		// Debug.Log(att + "|" + angle);
 		for (int i = 0; i < this.count; i++) {
 			if (i != att) transform.GetChild(i).GetComponent<Button>().interactable = false;
 			if (i == att) transform.GetChild(i).GetComponent<Button>().interactable = true;

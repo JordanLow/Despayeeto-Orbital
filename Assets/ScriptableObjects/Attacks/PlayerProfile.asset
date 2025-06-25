@@ -15,5 +15,6 @@ MonoBehaviour:
   jabCombo: {fileID: 11400000, guid: 1b2f1aff8fd67764db07bf70630f4037, type: 2}
   largeJabCombo: {fileID: 11400000, guid: 12817e2db1ba6a642bbea5f721b0d752, type: 2}
   pierceCombo: {fileID: 11400000, guid: f6618127413c3b94cb4d78e18cfa7ccf, type: 2}
+  slashCombo: {fileID: 11400000, guid: 4ae5fe8febe5bee429196aeb87344056, type: 2}
   spineProjectile: {fileID: 3339676973805755859, guid: 2ea6e58f5c61d2a44b77e1d7e52d4d38, type: 3}
   impaleSeeker: {fileID: 1821090971498292515, guid: 40195cd11f96ad243961a75c11521b44, type: 3}

@@ -23,6 +23,7 @@ public class EnemyAI : MonoBehaviour
 		Attacking,
 		Bounded,
 		Stunned,
+		Yanked,
 		Dead
 	}
 	
@@ -30,6 +31,9 @@ public class EnemyAI : MonoBehaviour
 	private float curLimit = 0f;
 	private float rLimit = 0.4f;
 	private float timeDied = 0f;
+	private Vector3 yankTo;
+	private Vector3 yankFrom;
+	private float yankTime = 0f;
 	public float stunDuration = 0f;
 	
 	void Start()
@@ -54,6 +58,16 @@ public class EnemyAI : MonoBehaviour
 		if (state == State.Dead) {
 			timeDied += Time.fixedDeltaTime;
 			if (timeDied > 2f) Destroy(gameObject);
+			return;
+		}
+		if (state == State.Yanked) {
+			yankTime += Time.fixedDeltaTime;
+			if (yankTime >= 0.33f) {
+				yankTime = 0f;
+				state = State.Wandering;
+				return;
+			}
+			rb.MovePosition(Vector3.Lerp(yankFrom, yankTo + ((yankFrom - yankTo).normalized * 0.6f), yankTime * 3f));
 			return;
 		}
 		if (stunDuration > 0f && state != State.Stunned) {
@@ -195,7 +209,21 @@ public class EnemyAI : MonoBehaviour
 		return false;
 	}
 	
-	public virtual void UnlockPower() {
-		
+	public virtual void AttemptYank(PlayerStateMachine src) {
+		animator.Play("EmptyAnimanim"); // Placeholder for actual stun animation
+		state = State.Yanked;
+		yankFrom = rb.position;
+		yankTo = src.transform.position;
 	}
+	
+	public virtual void AttemptGrab(PlayerStateMachine src) {
+		src.animationCancelled = true;
+		src.movementStates.Bound.boundedEnemy = this;
+		src.actionStates.Bounding.boundedEnemy = this;
+		src.MovementTransition(src.movementStates.Bound);
+		src.ActionTransition(src.actionStates.Bounding);
+		src.movementStates.Bound.boundedEnemy.SetBound(true);
+	}
+	
+	public virtual void UnlockPower() { }
 }
