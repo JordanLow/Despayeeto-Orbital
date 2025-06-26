@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Unity.Cinemachine;
@@ -314,6 +315,8 @@ public class PlayerStateMachine : MonoBehaviour
 	private float HP;
 	
 	// Maybe move this stuff in a separate script if it gets too clunky
+	public HashSet<EnemyAI> crowd;
+	
 	
 	public void getHit(GameObject src, float dmg) {
 		if (currentAction == actionStates.Attenuate) return;
@@ -360,6 +363,7 @@ public class PlayerStateMachine : MonoBehaviour
 		this.inputDirection = Vector3.zero;
 		this.currentVelocity = Vector3.zero;
 		this.cam = Camera.main;
+		this.crowd = new HashSet<EnemyAI>();
 		this.controller = GetComponent<CharacterController>();
 		this.animator = GetComponent<Animator>();
 		this.MovementTransition(movementStates.Grounded);
