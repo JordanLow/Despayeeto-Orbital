@@ -7,13 +7,13 @@ public class EnemyAI : MonoBehaviour
 	[SerializeField] private float speed;
 	
     protected Rigidbody rb;
-	private NavMeshPath path;
-	private int pathIdx;
-	private Vector3 velocity;
-	private Animator animator;
+	protected NavMeshPath path;
+	protected int pathIdx;
+	protected Vector3 velocity;
+	protected Animator animator;
 	
-	[SerializeField] private float HP = 20f;
-	[SerializeField] private float Devourable = 10f;
+	[SerializeField] protected float HP = 20f;
+	[SerializeField] protected float Devourable = 10f;
 	[SerializeField] public float heightOffset = 0.45f;
 	
 	private enum State {
@@ -29,14 +29,14 @@ public class EnemyAI : MonoBehaviour
 	private State state;
 	private float curLimit = 0f;
 	private float rLimit = 0.4f;
-	private float timeDied = 0f;
+	private float timeDied = 2f;
 	private Vector3 yankTo;
 	private Vector3 yankFrom;
 	private float yankTime = 0f;
 	public float stunDuration = 0f;
 	protected PlayerStateMachine target;
 	
-	void Start()
+	protected virtual void Start()
 	{
 		rb = GetComponent<Rigidbody>();
 		animator = GetComponent<Animator>();
@@ -56,8 +56,8 @@ public class EnemyAI : MonoBehaviour
 			rb.detectCollisions = false;
 		}
 		if (state == State.Dead) {
-			timeDied += Time.fixedDeltaTime;
-			if (timeDied > 2f) Destroy(gameObject);
+			timeDied -= Time.fixedDeltaTime;
+			if (timeDied <= 0f) Destroy(gameObject);
 			return;
 		}
 		if (state == State.Yanked) {
@@ -93,7 +93,7 @@ public class EnemyAI : MonoBehaviour
 		if (state == State.Wandering) {
 			Collider[] hits = Physics.OverlapSphere(transform.position, 6f, LayerMask.GetMask("Player"));
 			if (hits.Length > 0) {
-				//Debug.Log("Player Detected");
+				// Debug.Log("Player Detected");
 				Transform nearestPlayer = hits[0].transform;
 				state = State.Chasing;
 				curLimit = 0f;
@@ -164,7 +164,7 @@ public class EnemyAI : MonoBehaviour
 		}
 	}
 	
-	private void GetAimlessDestination() {
+	protected virtual void GetAimlessDestination() {
 		for (int i = 0; i < 10; i++) {
 			Vector3 randPoint = transform.position + Random.insideUnitSphere * 5f;
 			if (NavMesh.SamplePosition(randPoint, out NavMeshHit hit, 2f, NavMesh.AllAreas)) {
@@ -175,7 +175,7 @@ public class EnemyAI : MonoBehaviour
 		}
 	}
 	
-	private void PathfindToPlayer(Transform player) {
+	protected virtual void PathfindToPlayer(Transform player) {
 		for (int i = 0; i < 10; i++) {
 			if (NavMesh.SamplePosition(player.position, out NavMeshHit hit, 2f, NavMesh.AllAreas)) {
 				NavMesh.CalculatePath(transform.position, hit.position, NavMesh.AllAreas, path);
@@ -186,7 +186,7 @@ public class EnemyAI : MonoBehaviour
 		}
 	}
 	
-	private Vector2 VectorYNormalize(Vector3 v3) {
+	protected Vector2 VectorYNormalize(Vector3 v3) {
 		return new Vector2(v3.x, v3.z);
 	}
 	
