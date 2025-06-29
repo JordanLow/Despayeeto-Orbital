@@ -22,3 +22,18 @@ public class BasicChainDelegate : IAttackDelegate
 		comboStage = (comboStage + 1) % 3;
 	}
 }
+
+public class LargeChainDelegate : IAttackDelegate
+{
+	private int comboStage = 0; // 0 = Left Jab, 1 = Right Jab, 2 = Chain Finisher
+	private float chainWindow = -1f;
+
+	public void Execute(PlayerStateMachine FSM) {
+		if (chainWindow != -1f && Time.time - chainWindow >= 2f) {
+			comboStage = 0;
+		}
+		chainWindow = Time.time;
+		FSM.animator.Play(FSM.attackProfile.largeJabCombo.comboStages[comboStage].animationClip.name, 1);
+		comboStage = (comboStage + 1) % 3;
+	}
+}

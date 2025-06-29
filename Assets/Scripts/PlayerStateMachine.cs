@@ -139,21 +139,21 @@ public class PlayerStateMachine : MonoBehaviour
 		currentVelocity.y = jumpSpeed;
 	}
 
-	[SerializeField] public float jabRollLeniency = 0.05f;
-	public bool holdCheck = false;
 	public void OnJab(InputAction.CallbackContext context) {
-		if (context.started) {
-			if (this.currentMeta == metaStates.Curled) holdCheck = true;
-			Command command = new JabCommand();
-			command = this.currentMeta.FilterCommand(command);
-			command = this.currentMovement.FilterCommand(command);
-			command = this.currentAction.FilterCommand(command);
-			command.execute(this.currentMovement, this.currentAction);
-		} else if (context.canceled) {
-			holdCheck = false;
-			if (currentAction == actionStates.ChargeRoll) {
-				ActionTransition(actionStates.Rolling);
-			}
+		if (!context.started) return;
+		Command command = new JabCommand();
+		command = this.currentMeta.FilterCommand(command);
+		command = this.currentMovement.FilterCommand(command);
+		command = this.currentAction.FilterCommand(command);
+		command.execute(this.currentMovement, this.currentAction);
+	}
+	public void RollCollideHelper(GameObject other) {
+		if (currentAction == actionStates.Rolling) {
+			// Play animation and link state exit to machine rider?
+			// If I can actually make the damn animations work zzzz
+			// For now this shall suffice
+			actionStates.Rolling.lastHit = other;
+			ActionTransition(actionStates.Idle);
 		}
 	}
 	
@@ -168,12 +168,17 @@ public class PlayerStateMachine : MonoBehaviour
 	}
 	
 	public void OnConsume(InputAction.CallbackContext context) {
-		if (!context.started) return;
-		Command command = new ConsumeCommand();
-		command = this.currentMeta.FilterCommand(command);
-		command = this.currentMovement.FilterCommand(command);
-		command = this.currentAction.FilterCommand(command);
-		command.execute(this.currentMovement, this.currentAction);
+		if (context.started) {
+			Command command = new ConsumeCommand();
+			command = this.currentMeta.FilterCommand(command);
+			command = this.currentMovement.FilterCommand(command);
+			command = this.currentAction.FilterCommand(command);
+			command.execute(this.currentMovement, this.currentAction);
+		} else if (context.canceled) {
+			if (currentAction == actionStates.ChargeRoll) {
+				ActionTransition(actionStates.Rolling);
+			}
+		}
 	}
 	
 	public void OnHoldAction(InputAction.CallbackContext context) {

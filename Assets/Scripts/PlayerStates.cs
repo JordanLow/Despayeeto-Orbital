@@ -51,7 +51,7 @@ public abstract class PlayerActionState : PlayerState
 		this.FSM = ctx;
 	}
 	
-	public virtual void modeSet(int mode) { }
+	public virtual void ModeSet(int mode) { }
 }
 
 public abstract class PlayerMetaState : PlayerState
@@ -61,8 +61,6 @@ public abstract class PlayerMetaState : PlayerState
 	public PlayerMetaState(PlayerStateMachine ctx) {
 		this.FSM = ctx;
 	}
-	
-	public virtual void modeSet(int mode) { }
 }
 
 public class PlayerGroundedState : PlayerMovementState
@@ -134,6 +132,9 @@ public class PlayerAirborneState : PlayerMovementState
 	public override Command FilterCommand(Command command) {
 		if (command is JumpCommand) {
 			return new BoundCommand();
+		}
+		if (command is ChargeRollCommand) {
+			return new SlamCommand();
 		}
 		return command;
 	}
@@ -274,22 +275,20 @@ public class PlayerIdleState : PlayerActionState
 public class PlayerJabbingState : PlayerActionState
 {
 	public float jabEnterTime { get; private set; }
-	private bool checkedCancel = false;
 	private IAttackDelegate curAttack;
 	private IAttackDelegate[] attackSets;
 	private int qmode = 0;
 
 	public PlayerJabbingState(PlayerStateMachine ctx) : base(ctx) {
-		attackSets = new IAttackDelegate[1] { new BasicChainDelegate() };
+		attackSets = new IAttackDelegate[2] { new BasicChainDelegate(), new LargeChainDelegate() };
 		curAttack = attackSets[0];
 	}
 	
-	public override void modeSet(int mode) {
+	public override void ModeSet(int mode) {
 		qmode = mode;
 	}
 	
 	public override void Enter() {
-		checkedCancel = false;
 		// Snap to nearest enemy
 		Collider[] hits = Physics.OverlapSphere(FSM.transform.position, 1.6f, LayerMask.GetMask("Enemy"));
 		if (hits.Length >= 1) {
@@ -305,19 +304,7 @@ public class PlayerJabbingState : PlayerActionState
 	}
 	
 	public override void Exit() {
-		checkedCancel = false;
 		FSM.movementAllowed = true;
-	}
-	
-	public override void Tick() {
-		if (Time.time - jabEnterTime >= FSM.jabRollLeniency && !checkedCancel) {
-			if (!FSM.holdCheck) {
-				checkedCancel = true;
-			} else {
-				FSM.actionStates.Idle.actionQueue = FSM.actionStates.ChargeRoll;
-				FSM.animator.Play("EmptyAnimanim", 1);
-			}
-		}
 	}
 
 	public override void OnJabCommand() {
@@ -438,53 +425,102 @@ public class PlayerChargeRollState : PlayerActionState
 public class PlayerRollingState : PlayerActionState
 {
 	public float power;
-	private Collider hitbox; // Handled here rather than animations due to looping nature of roll
+	private float pingBuffer;
+	private bool pingedFrom = false;
+	public GameObject lastHit;
 	
-	public PlayerRollingState(PlayerStateMachine ctx) : base(ctx) {
-		hitbox = FSM.transform.Find("Hitboxes/Roll Hitbox").GetComponent<Collider>();
-	}
+	public PlayerRollingState(PlayerStateMachine ctx) : base(ctx) {	}
 	
 	public override void Enter() {
+		pingBuffer = Time.time - 3f;
 		FSM.movementAllowed = false;
-		hitbox.enabled = true;
-		FSM.animator.Play("Roll", 1);
-		// Lock onto some nearby enemy, probably with a dynamically updating direction
+		// TODO: Make it directionally biased (favoured to target enemies in stick direction)
+		Collider[] hits = Physics.OverlapSphere(FSM.transform.position, 18f, LayerMask.GetMask("Enemy"));
+		if (hits.Length >= 2 || (hits.Length == 1 && hits[0].gameObject != lastHit)) {
+			int idx = 0;
+			if (hits[idx].gameObject == lastHit) idx = 1;
+			Vector3 enemyDir = hits[idx].transform.position - FSM.transform.position;
+			enemyDir.y = 0;
+			FSM.transform.rotation = Quaternion.LookRotation(enemyDir);
+		} else {
+			FSM.transform.rotation = FSM.transform.rotation * Quaternion.Euler(0, 180, 0);
+		}
+		if (!pingedFrom) FSM.animator.Play("Roll", 1);
+		pingedFrom = false;
 	}
 	
 	public override void Exit() {
-		hitbox.enabled = false;
-		FSM.animator.Play("EmptyAnimanim", 1);
 		FSM.movementAllowed = true;
+		if (FSM.actionStates.Idle.actionQueue == FSM.actionStates.Rolling) {
+			power += 0.5f;
+			FSM.animator.Play("Pingtest", 1);
+			pingedFrom = true;
+		} else {
+			FSM.animator.Play("EmptyAnimanim", 1);
+		}
 	}
 	
 	public override void Tick() {
-		// Enable some rolling hitbox
+		// Process Pings and Enemy contact I guess
 		FSM.controller.Move(FSM.transform.forward * power * 5f * Time.deltaTime);
+		// After transition to Idle, check if within buffer
+		// Only allow if transition from contact, that is clear the pingBuffer from other transition sources
+		if (Time.time - pingBuffer < 3f) {
+			FSM.actionStates.Idle.actionQueue = FSM.actionStates.Rolling;
+		} else {
+			FSM.actionStates.Idle.actionQueue = null;
+		}
 	}
 	
 	public override void OnJumpCommand() {
 		FSM.ActionTransition(FSM.actionStates.Idle);
 	}
+	
+	public override void OnJabCommand() {
+		pingBuffer = Time.time;
+	}
 }
 
 public class PlayerSlammingState : PlayerActionState
 {
+	private float pingBuffer;
+	
 	public PlayerSlammingState(PlayerStateMachine ctx) : base(ctx) { }
 	
 	public override void Enter() {
+		pingBuffer = Time.time - 1.5f;
 		//FSM.movementAllowed = false;
 		Physics.IgnoreLayerCollision(3, 7, true);
 	}
-	
+
 	public override void Exit() {
 		Physics.IgnoreLayerCollision(3, 7, false);
 		//FSM.movementAllowed = true;
+	}
+
+	public override void Tick() {
+		// After transition to Idle, check if within buffer
+		// Only allow if transition from contact, that is clear the pingBuffer from other transition sources
+		if (Time.time - pingBuffer < 1.5f) {
+			FSM.actionStates.Idle.actionQueue = FSM.actionStates.Rolling;
+			FSM.actionStates.Rolling.power = 1.9f;
+		} else {
+			FSM.actionStates.Idle.actionQueue = null;
+		}
+	}
+
+	public override void OnJabCommand() {
+		pingBuffer = Time.time;
 	}
 }
 
 public class PlayerNormalState : PlayerMetaState
 {
 	public PlayerNormalState(PlayerStateMachine ctx) : base(ctx) { }
+	
+	public override void Enter() {
+		FSM.actionStates.Jabbing.ModeSet(0);
+	}
 }
 
 public class PlayerCurledState : PlayerMetaState
@@ -493,21 +529,28 @@ public class PlayerCurledState : PlayerMetaState
 	
 	public override void Enter() {
 		FSM.animator.Play("Curl", 2);
+		FSM.actionStates.Jabbing.ModeSet(1);
 	}
 	
 	public override void Exit() {
 		FSM.movementStates.Grounded.slamQueued = false;
+		FSM.actionStates.Idle.actionQueue = null;
 		FSM.MovementTransition(FSM.movementStates.Grounded);
+		// Handle Scenario when Jabs are interrupted
+		// Either stop the Jab (Cancel the animation and let the state machine rider resolve)
+		// Or allow the jab to follow through and stall the transition
+		// The latter probably requires some re-factoring to allow for selective canceling of Roll/Slam
+		// Plus clarification on Attenuate and other gear wheel stuff
+		//// Right now, just force-cancel everything
+		FSM.animator.Play("EmptyAnimanim", 1);
 		FSM.ActionTransition(FSM.actionStates.Idle);
+		// For some reason the Unity animator sucks with scale so I'm fixing it here
 		FSM.animator.Play("Uncurl", 2);
 	}
 	
 	public override Command FilterCommand(Command command) {
-		//if (command is JabCommand) {
-			//return new ChargeRollCommand();
-		//}
 		if (command is ConsumeCommand) {
-			return new SlamCommand();
+			return new ChargeRollCommand();
 		}
 		return command;
 	}
