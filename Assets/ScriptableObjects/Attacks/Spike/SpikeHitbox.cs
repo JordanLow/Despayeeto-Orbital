@@ -28,6 +28,6 @@ public class SpikeHitbox : AttackHitbox
 	void OnTriggerEnter(Collider other) {
 		if (other.gameObject.layer != LayerMask.NameToLayer("Enemy")) return;
 		// Roll potentially interacts with other classes as well, for future refactoring
-		other.GetComponent<EnemyAI>().takeDamage(attackData.damage, spikeDuration + 0.1f);
+		other.GetComponent<EnemyAI>().takeDamage(attackData.damage, spikeDuration + 0.1f, owner);
 	}
 }

@@ -11,7 +11,7 @@ public class SpineHitbox : AttackHitbox
 	
 	void OnTriggerEnter(Collider other) {
         if (other.gameObject.layer != LayerMask.NameToLayer("Enemy")) return;
-        other.GetComponent<EnemyAI>().takeDamage(attackData.damage, attackData.stun);
+        other.GetComponent<EnemyAI>().takeDamage(attackData.damage, attackData.stun, owner);
 		Destroy(gameObject);
     }
 }

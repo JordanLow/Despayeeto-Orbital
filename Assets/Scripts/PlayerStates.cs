@@ -74,6 +74,10 @@ public class PlayerGroundedState : PlayerMovementState
 	public PlayerGroundedState(PlayerStateMachine ctx) : base(ctx) { }
 	private bool isJumping = false;
 	public bool slamQueued = false;
+	
+	public override void Exit() {
+		isJumping = false;
+	}
 
 	public override void Tick() {
 		if (slamQueued) {
@@ -86,7 +90,6 @@ public class PlayerGroundedState : PlayerMovementState
 		base.Tick();
 		if (!Physics.CheckSphere(FSM.transform.position, 0.1f, LayerMask.GetMask("Ground"))) {
 		//if (!FSM.controller.isGrounded) {
-			isJumping = false;
 			FSM.MovementTransition(FSM.movementStates.Airborne);
 			FSM.animator.SetBool("GroundedMoving", false);
 		} else {
@@ -214,9 +217,17 @@ public class PlayerAirborneState : PlayerMovementState
 	public override void OnBoundCommand() {
 		Collider[] hits = Physics.OverlapSphere(FSM.transform.position, 3f, LayerMask.GetMask("Enemy"));
 		if (hits.Length > 0) {
+			Array.Sort(hits, (a, b) => (FSM.transform.position - a.transform.position).magnitude.CompareTo((FSM.transform.position - b.transform.position).magnitude));
+		}
+		if (hits.Length > 0) {
+			int idx = 0;
+			while (hits[idx].gameObject.tag == "Boss") {
+				idx++;
+				if (idx >= hits.Length) return;
+			}
 			Debug.Log("Bounding");
-			FSM.movementStates.Bound.boundedEnemy = hits[0].GetComponent<EnemyAI>();
-			FSM.actionStates.Bounding.boundedEnemy = hits[0].GetComponent<EnemyAI>();
+			FSM.movementStates.Bound.boundedEnemy = hits[idx].GetComponent<EnemyAI>();
+			FSM.actionStates.Bounding.boundedEnemy = hits[idx].GetComponent<EnemyAI>();
 			FSM.MovementTransition(FSM.movementStates.Bound);
 			FSM.ActionTransition(FSM.actionStates.Bounding);
 			FSM.movementStates.Bound.boundedEnemy.SetBound(true);
@@ -307,6 +318,33 @@ public class PlayerBoundState : PlayerMovementState
 		FSM.MovementTransition(FSM.movementStates.Grounded);
 		FSM.ActionTransition(FSM.actionStates.Idle);
 		FSM.movementStates.Grounded.OnJumpCommand();
+	}
+}
+
+public class PlayerStunState : PlayerMovementState
+{
+	public float stunTimer;
+	public Vector3 knockbackDir;
+	
+	public PlayerStunState(PlayerStateMachine ctx) : base(ctx) { }
+	
+	public override void Enter() {
+		FSM.currentVelocity = knockbackDir;
+	}
+	
+	public override void Tick() {
+		stunTimer -= Time.deltaTime;
+		if (stunTimer <= 0f) {
+			stunTimer = 0f;
+			FSM.MovementTransition(FSM.movementStates.Grounded);
+		} else {
+			if (knockbackDir != Vector3.zero) {
+				Vector3 currentVelocity = knockbackDir;
+				if (currentVelocity.y > Physics.gravity.y) currentVelocity.y += Physics.gravity.y * Time.deltaTime;
+				FSM.currentVelocity = currentVelocity;
+				FSM.controller.Move(knockbackDir * Time.deltaTime);
+			}
+		}
 	}
 }
 
@@ -676,6 +714,29 @@ public class PlayerYankingState : PlayerActionState
 	
 	public override void Exit() {
 		FSM.movementAllowed = true;
+	}
+}
+
+public class PlayerStunnedState : PlayerActionState
+{
+	public float stunTimer;
+	
+	public PlayerStunnedState(PlayerStateMachine ctx) : base(ctx) { }
+	
+	public override void Enter() {
+		FSM.movementAllowed = false;
+	}
+	
+	public override void Exit() {
+		FSM.movementAllowed = true;
+	}
+	
+	public override void Tick() {
+		stunTimer -= Time.deltaTime;
+		if (stunTimer <= 0f) {
+			stunTimer = 0f;
+			FSM.ActionTransition(FSM.actionStates.Idle);
+		}
 	}
 }
 

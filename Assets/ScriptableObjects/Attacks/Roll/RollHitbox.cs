@@ -9,7 +9,7 @@ public class RollHitbox : AttackHitbox
 		// Roll potentially interacts with other classes as well, for future refactoring
 		if (other.gameObject == lastHit) return;
 		lastHit = other.gameObject;
-		other.GetComponent<EnemyAI>().takeDamage(attackData.damage * owner.actionStates.Rolling.power, attackData.stun);
+		other.GetComponent<EnemyAI>().takeDamage(attackData.damage * owner.actionStates.Rolling.power, attackData.stun, owner);
 		owner.RollCollideHelper(other.gameObject);
 	}
 }

@@ -50,14 +50,16 @@ public class EnemyAI : MonoBehaviour
 
     protected virtual void FixedUpdate()
 	{
+		if (state == State.Dead) {
+			timeDied -= Time.fixedDeltaTime;
+			if (timeDied <= 0f) Destroy(gameObject);
+			return;
+		}
 		if (HP <= 0f) {
 			state = State.Dead;
 			animator.Play("Deflate");
 			rb.detectCollisions = false;
-		}
-		if (state == State.Dead) {
-			timeDied -= Time.fixedDeltaTime;
-			if (timeDied <= 0f) Destroy(gameObject);
+			target?.crowd.Remove(this);
 			return;
 		}
 		if (state == State.Yanked) {
@@ -204,7 +206,7 @@ public class EnemyAI : MonoBehaviour
 		Debug.Log("Enemy State: " + state);
 	}
 	
-	public void takeDamage(float dmg, float stunLength) {
+	public virtual void takeDamage(float dmg, float stunLength, PlayerStateMachine src) {
 		if (stunLength > stunDuration) {
 			stunDuration = stunLength;
 		}
