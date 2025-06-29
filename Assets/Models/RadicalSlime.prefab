@@ -140,7 +140,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   owner: {fileID: 6255097900279828225}
-  damage: 70
+  damage: 650
 --- !u!1 &739716820580311262
 GameObject:
   m_ObjectHideFlags: 0
@@ -857,6 +857,7 @@ MonoBehaviour:
   HP: 20
   Devourable: 10
   heightOffset: 0.45
+  stunDuration: 0
   particles: {fileID: 1030067171989203513}
 --- !u!95 &7367316406890036872
 Animator:

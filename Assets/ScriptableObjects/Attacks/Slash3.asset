@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animationClip: {fileID: 7400000, guid: b5662b2ffe0e175499e2f9b8b63a6b12, type: 2}
   damage: 10
-  stun: 0.4
+  stun: 0.8
   attackName: Slash3

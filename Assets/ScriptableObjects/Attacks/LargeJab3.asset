@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: LargeJab3
   m_EditorClassIdentifier: 
   animationClip: {fileID: 7400000, guid: 35b3073425dfa2240863f851164b1655, type: 2}
-  damage: 10
-  stun: 0.6
+  damage: 20
+  stun: 1.6
   attackName: LargeJab3
