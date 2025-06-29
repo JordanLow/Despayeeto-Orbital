@@ -2,10 +2,10 @@ using UnityEngine;
 
 public class EnemyHitbox : MonoBehaviour
 {
-	[SerializeField] GameObject owner;
-	[SerializeField] float damage;
+	[SerializeField] protected GameObject owner;
+	[SerializeField] protected float damage;
 	
-	void OnTriggerEnter(Collider other) {
+	protected virtual void OnTriggerEnter(Collider other) {
 		if (other.gameObject.layer != LayerMask.NameToLayer("Player")) return;
 		other.GetComponent<PlayerStateMachine>().getHit(owner, damage);
 	}
