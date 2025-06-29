@@ -17,18 +17,21 @@ public class PlayerStateMachine : MonoBehaviour
 		public PlayerAirborneState Airborne { get; }
 		public PlayerBoundState Bound { get; }
 		public PlayerSlamState Slam { get; }
+		public PlayerStunState Stun { get; }
 		
 		public MovementRegion(PlayerGroundedState groundedState, 
 			PlayerAimingState aimingState,
 			PlayerAirborneState airborneState,
 			PlayerBoundState boundState,
-			PlayerSlamState slamState) {
+			PlayerSlamState slamState,
+			PlayerStunState stunState) {
 			
 			this.Grounded = groundedState;
 			this.Aiming = aimingState;
 			this.Airborne = airborneState;
 			this.Bound = boundState;
 			this.Slam = slamState;
+			this.Stun = stunState;
 		}
 	}
 	
@@ -44,6 +47,8 @@ public class PlayerStateMachine : MonoBehaviour
 		public PlayerImpalingState Impaling { get; }
 		public PlayerGrabbingState Grabbing { get; }
 		public PlayerYankingState Yanking { get; }
+		public PlayerStunnedState Stunned { get; }
+
 		
 		public ActionRegion(PlayerIdleState idleState,
 			PlayerJabbingState jabbingState,
@@ -55,7 +60,8 @@ public class PlayerStateMachine : MonoBehaviour
 			PlayerSlammingState slammingState,
 			PlayerImpalingState impalingState,
 			PlayerGrabbingState grabbingState,
-			PlayerYankingState yankingState) {
+			PlayerYankingState yankingState,
+			PlayerStunnedState stunnedState) {
 			
 			this.Idle = idleState;
 			this.Jabbing = jabbingState;
@@ -68,6 +74,7 @@ public class PlayerStateMachine : MonoBehaviour
 			this.Impaling = impalingState;
 			this.Grabbing = grabbingState;
 			this.Yanking = yankingState;
+			this.Stunned = stunnedState;
 		}
 	}
 	
@@ -339,7 +346,8 @@ public class PlayerStateMachine : MonoBehaviour
 			new PlayerAimingState(this),
 			new PlayerAirborneState(this),
 			new PlayerBoundState(this),
-			new PlayerSlamState(this)
+			new PlayerSlamState(this),
+			new PlayerStunState(this)
 		);
 		this.actionStates = new ActionRegion(
 			new PlayerIdleState(this),
@@ -352,7 +360,8 @@ public class PlayerStateMachine : MonoBehaviour
 			new PlayerSlammingState(this),
 			new PlayerImpalingState(this),
 			new PlayerGrabbingState(this),
-			new PlayerYankingState(this)
+			new PlayerYankingState(this),
+			new PlayerStunnedState(this)
 		);
 		this.metaStates = new MetaRegion(
 			new PlayerNormalState(this),
@@ -374,4 +383,18 @@ public class PlayerStateMachine : MonoBehaviour
 		Cursor.visible = false;
 		Cursor.lockState = CursorLockMode.Locked;
     }
+	
+	
+	// Levers for external forces
+	
+	public void Reaction(Vector3 knockbackDir, float stunDuration) {
+		MovementTransition(movementStates.Grounded);
+		ActionTransition(actionStates.Idle);
+		actionStates.Stunned.stunTimer = stunDuration;
+		movementStates.Stun.stunTimer = stunDuration;
+		movementStates.Stun.knockbackDir = knockbackDir;
+		MovementTransition(movementStates.Stun);
+		ActionTransition(actionStates.Stunned);
+	}
+	
 }
