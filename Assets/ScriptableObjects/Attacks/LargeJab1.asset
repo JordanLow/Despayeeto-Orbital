@@ -15,4 +15,4 @@ MonoBehaviour:
   animationClip: {fileID: 7400000, guid: b75848d3274170d4399c059e3c857661, type: 2}
   damage: 5
   stun: 0.2
-  attackName: Jab1
+  attackName: LargeJab1
