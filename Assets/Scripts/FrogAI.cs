@@ -160,10 +160,10 @@ public class FrogAI : EnemyAI
 					reverse = true;
 				} else if (dist >= 2f && dist <= 3.4f) {
 					// If Player within attack range, shift to attack state
-					// frogState = State.Leaping;
+					 frogState = State.Leaping;
 					// Ask later how to switch attack logic
-					frogState = State.Striking;
-					posMem = transform.position;
+					// frogState = State.Striking;
+					// posMem = transform.position;
 				} else {
 					
 				}
