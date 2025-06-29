@@ -83,3 +83,19 @@ public class ImpaleCommand : Command
 		actionState.OnImpaleCommand();
 	}
 }
+
+public class GrabCommand : Command
+{
+	public void execute(PlayerMovementState movementState, PlayerActionState actionState) {
+		movementState.OnGrabCommand();
+		actionState.OnGrabCommand();
+	}
+}
+
+public class YankCommand : Command
+{
+	public void execute(PlayerMovementState movementState, PlayerActionState actionState) {
+		movementState.OnYankCommand();
+		actionState.OnYankCommand();
+	}
+}

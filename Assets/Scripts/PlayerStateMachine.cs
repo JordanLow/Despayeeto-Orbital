@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Unity.Cinemachine;
@@ -12,16 +13,19 @@ public class PlayerStateMachine : MonoBehaviour
 	// Regions and States for this State Machine
 	public class MovementRegion {
 		public PlayerGroundedState Grounded { get; }
+		public PlayerAimingState Aiming { get; }
 		public PlayerAirborneState Airborne { get; }
 		public PlayerBoundState Bound { get; }
 		public PlayerSlamState Slam { get; }
 		
 		public MovementRegion(PlayerGroundedState groundedState, 
+			PlayerAimingState aimingState,
 			PlayerAirborneState airborneState,
 			PlayerBoundState boundState,
 			PlayerSlamState slamState) {
 			
 			this.Grounded = groundedState;
+			this.Aiming = aimingState;
 			this.Airborne = airborneState;
 			this.Bound = boundState;
 			this.Slam = slamState;
@@ -38,6 +42,8 @@ public class PlayerStateMachine : MonoBehaviour
 		public PlayerRollingState Rolling { get; }
 		public PlayerSlammingState Slamming { get; }
 		public PlayerImpalingState Impaling { get; }
+		public PlayerGrabbingState Grabbing { get; }
+		public PlayerYankingState Yanking { get; }
 		
 		public ActionRegion(PlayerIdleState idleState,
 			PlayerJabbingState jabbingState,
@@ -47,7 +53,9 @@ public class PlayerStateMachine : MonoBehaviour
 			PlayerChargeRollState chargeRollState,
 			PlayerRollingState rollingState,
 			PlayerSlammingState slammingState,
-			PlayerImpalingState impalingState) {
+			PlayerImpalingState impalingState,
+			PlayerGrabbingState grabbingState,
+			PlayerYankingState yankingState) {
 			
 			this.Idle = idleState;
 			this.Jabbing = jabbingState;
@@ -58,6 +66,8 @@ public class PlayerStateMachine : MonoBehaviour
 			this.Rolling = rollingState;
 			this.Slamming = slammingState;
 			this.Impaling = impalingState;
+			this.Grabbing = grabbingState;
+			this.Yanking = yankingState;
 		}
 	}
 	
@@ -65,15 +75,18 @@ public class PlayerStateMachine : MonoBehaviour
 		public PlayerNormalState Normal { get; }
 		public PlayerCurledState Curled { get; }
 		public PlayerLockdownState Lockdown { get; }
+		public PlayerAimState Aim { get; }
 		
 		public MetaRegion(PlayerNormalState normalState,
 			PlayerCurledState curledState,
-			PlayerLockdownState lockdownState) {
+			PlayerLockdownState lockdownState,
+			PlayerAimState aimState) {
 			
 			this.Normal = normalState;
 			this.Curled = curledState;
 			this.Lockdown = lockdownState;
-			}
+			this.Aim = aimState;
+		}
 	}
 	
 	public MovementRegion movementStates { get; private set; }
@@ -92,6 +105,7 @@ public class PlayerStateMachine : MonoBehaviour
 		} else {
 			hpFillImg.rectTransform.localScale = new Vector3(Mathf.Clamp01(HP / maxHP), 1, 1);
 		}
+		this.currentMeta?.Tick();
 		this.currentAction?.Tick();
         this.currentMovement?.Tick();
     }
@@ -122,10 +136,22 @@ public class PlayerStateMachine : MonoBehaviour
 	public bool movementAllowed = true;
 	[SerializeField] GameObject offenseGearWheel;
 	[SerializeField] GameObject defenseGearWheel;
+	public CinemachineCamera aimCam;
+	public CinemachineOrbitalFollow freeCam;
+	public GameObject aimAnchor;
+	public RectTransform reticle;
 	private int inGearWheel = 0; // 0 = Not in Gear Wheel, 1 = Offense, 2 = Defense
 	public int equippedOffense { get; private set; } = 0;
 	public int equippedDefense { get; private set; } = 0;
 	
+	public void SetCam(int mode) {
+		if (mode == 0) {
+			freeCam.HorizontalAxis.Value = transform.eulerAngles.y;
+			aimCam.Priority = 0;
+		} else {
+			aimCam.Priority = 2;
+		}
+	}
 	
 	public void OnMove(InputAction.CallbackContext context) {
 		Vector2 direction = context.ReadValue<Vector2>() * moveSpeed;
@@ -159,8 +185,15 @@ public class PlayerStateMachine : MonoBehaviour
 			// If I can actually make the damn animations work zzzz
 			// For now this shall suffice
 			actionStates.Rolling.lastHit = other;
+			actionStates.Rolling.lastHitTime = Time.time;
 			ActionTransition(actionStates.Idle);
 		}
+	}
+	public void GrabHelper() {
+		actionStates.Grabbing.target?.GetComponent<EnemyAI>()?.AttemptGrab(this);
+	}
+	public void YankHelper() {
+		actionStates.Yanking.target?.GetComponent<EnemyAI>()?.AttemptYank(this);
 	}
 	
 	public void OnAttenuate(InputAction.CallbackContext context) {
@@ -200,6 +233,9 @@ public class PlayerStateMachine : MonoBehaviour
 				break;
 			case 2:
 				nextState = metaStates.Lockdown;
+				break;
+			case 3:
+				nextState = metaStates.Aim;
 				break;
 			default:
 				break;
@@ -279,6 +315,8 @@ public class PlayerStateMachine : MonoBehaviour
 	private float HP;
 	
 	// Maybe move this stuff in a separate script if it gets too clunky
+	public HashSet<EnemyAI> crowd;
+	
 	
 	public void getHit(GameObject src, float dmg) {
 		if (currentAction == actionStates.Attenuate) return;
@@ -298,6 +336,7 @@ public class PlayerStateMachine : MonoBehaviour
     {
         this.movementStates = new MovementRegion(
 			new PlayerGroundedState(this),
+			new PlayerAimingState(this),
 			new PlayerAirborneState(this),
 			new PlayerBoundState(this),
 			new PlayerSlamState(this)
@@ -311,16 +350,20 @@ public class PlayerStateMachine : MonoBehaviour
 			new PlayerChargeRollState(this),
 			new PlayerRollingState(this),
 			new PlayerSlammingState(this),
-			new PlayerImpalingState(this)
+			new PlayerImpalingState(this),
+			new PlayerGrabbingState(this),
+			new PlayerYankingState(this)
 		);
 		this.metaStates = new MetaRegion(
 			new PlayerNormalState(this),
 			new PlayerCurledState(this),
-			new PlayerLockdownState(this)
+			new PlayerLockdownState(this),
+			new PlayerAimState(this)
 		);
 		this.inputDirection = Vector3.zero;
 		this.currentVelocity = Vector3.zero;
 		this.cam = Camera.main;
+		this.crowd = new HashSet<EnemyAI>();
 		this.controller = GetComponent<CharacterController>();
 		this.animator = GetComponent<Animator>();
 		this.MovementTransition(movementStates.Grounded);

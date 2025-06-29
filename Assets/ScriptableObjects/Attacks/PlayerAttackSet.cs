@@ -6,6 +6,7 @@ public class PlayerAttackSet : ScriptableObject
     public PlayerCombo jabCombo;
 	public PlayerCombo largeJabCombo;
 	public PlayerCombo pierceCombo;
+	public PlayerCombo slashCombo;
 	public GameObject spineProjectile;
 	public GameObject impaleSeeker;
 }
