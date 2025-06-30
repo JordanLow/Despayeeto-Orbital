@@ -6,6 +6,8 @@ using UnityEngine.AI;
 public class FrogAI : EnemyAI
 {
     [SerializeField] private GameObject unlock;
+	[SerializeField] private GameObject tempUnlock;
+	[SerializeField] private GameObject tempUnlock2;
 	[SerializeField] private GameObject marker;
 	public AnimationCurve hop;
 	public AnimationCurve leap;
@@ -126,6 +128,10 @@ public class FrogAI : EnemyAI
 				rb.MovePosition(rb.position + move);
 			} else if (strike == 1) {
 				marker.transform.localScale += new Vector3(2*Time.fixedDeltaTime / 2.25f, 0, 2*Time.fixedDeltaTime / 2.25f);
+				Collider[] hits = Physics.OverlapSphere(transform.position, 6f, LayerMask.GetMask("Player"));
+				if (hits.Length > 0) {
+					transform.position = hits[0].transform.position;
+				}
 			} else if (strike == 2) {
 					Vector3 move = new Vector3(0, -3f * Time.fixedDeltaTime, 0);
 					if (isGrounded) move.y = hit.point.y - transform.position.y + 0.01f;
@@ -244,6 +250,8 @@ public class FrogAI : EnemyAI
 	
 	public override void UnlockPower() {
 		unlock.SetActive(true);
+		tempUnlock.SetActive(true);
+		tempUnlock2.SetActive(true);
 	}
 	
 	public override void AttemptYank(PlayerStateMachine src) { }

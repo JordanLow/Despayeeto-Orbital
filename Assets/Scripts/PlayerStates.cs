@@ -669,7 +669,7 @@ public class PlayerImpalingState : PlayerActionState
 	}
 	
 	public override void Exit() {
-		if (Time.time - impaleCharge >= 1f) {
+		if (Time.time - impaleCharge >= 0.5f) {
 			Collider[] hits = Physics.OverlapSphere(FSM.transform.position, 10f, LayerMask.GetMask("Enemy"));			
 			for (int i = 0; i < hits.Length; i++) {
 				GameObject impaleSeeker = Transform.Instantiate(FSM.attackProfile.impaleSeeker, FSM.transform.position, Quaternion.identity);
