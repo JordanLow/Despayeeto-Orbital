@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 using Unity.Cinemachine;
 
 public abstract class PlayerState
@@ -18,6 +19,7 @@ public abstract class PlayerState
 	public virtual void OnChargeRollCommand() { }
 	public virtual void OnSlamCommand() { }
 	public virtual void OnSpineCommand() { }
+	public virtual void OnVolleyCommand() { }
 	public virtual void OnImpaleCommand() { } 
 	public virtual void OnGrabCommand() { }
 	public virtual void OnYankCommand() { }
@@ -65,6 +67,15 @@ public abstract class PlayerMetaState : PlayerState
 	protected readonly PlayerStateMachine FSM;
 	
 	public PlayerMetaState(PlayerStateMachine ctx) {
+		this.FSM = ctx;
+	}
+}
+
+public abstract class PlayerDefenseState : PlayerState
+{
+	protected readonly PlayerStateMachine FSM;
+	
+	public PlayerDefenseState(PlayerStateMachine ctx) {
 		this.FSM = ctx;
 	}
 }
@@ -187,6 +198,7 @@ public class PlayerAirborneState : PlayerMovementState
 {
 	private float minimumAirborneTime = 0.05f;
 	private float jumpEnterTime;
+	public bool shelled = false;
 	
 	public PlayerAirborneState(PlayerStateMachine ctx) : base(ctx) { }
 	
@@ -200,6 +212,10 @@ public class PlayerAirborneState : PlayerMovementState
 		//if (FSM.controller.isGrounded
 		&& Time.time - jumpEnterTime > minimumAirborneTime) {
 			FSM.MovementTransition(FSM.movementStates.Grounded);
+			if (shelled) {
+				Debug.Log("Crater Shelled");
+			}
+			// Else or Along the Shelled Crater
 			FSM.animator.Play("Land", 1);
 		}
 	}
@@ -244,6 +260,7 @@ public class PlayerSlamState : PlayerMovementState
 	private float minimumAirborneTime = 0.05f;
 	private float slamEnterTime;
 	private bool isSlamming = false;
+	public bool shelled = false;
 	
 	public PlayerSlamState(PlayerStateMachine ctx) : base(ctx) { }
 	
@@ -264,6 +281,10 @@ public class PlayerSlamState : PlayerMovementState
 		FSM.controller.Move(downAccel * 0.5f * Time.deltaTime);
 		if (!isSlamming && Physics.CheckSphere(FSM.transform.position, 0.1f, LayerMask.GetMask("Ground"))
 			&& Time.time - slamEnterTime > minimumAirborneTime) {
+			if (shelled) {
+				Debug.Log("Slamming Crater Shelled");
+			}
+			// Else or Along the Shelled Crater
 			FSM.animator.Play("Slam");
 			isSlamming = true;
 		}
@@ -382,6 +403,10 @@ public class PlayerIdleState : PlayerActionState
 			Debug.Log("Enemy at " + enemyDir);
 			spine.transform.rotation = Quaternion.LookRotation(Vector3.Cross(Vector3.forward, enemyDir), enemyDir);
 		}
+	}
+	
+	public override void OnVolleyCommand() {
+		FSM.ActionTransition(FSM.actionStates.Volleying);
 	}
 	
 	public override void OnImpaleCommand() {
@@ -589,17 +614,20 @@ public class PlayerRollingState : PlayerActionState
 	
 	public override void Exit() {
 		FSM.movementAllowed = true;
+		FSM.DefenseTransition(FSM.defenseStates.Default);
 		if (FSM.actionStates.Idle.actionQueue == FSM.actionStates.Rolling) {
 			power += 0.5f;
 			FSM.animator.Play("Pingtest", 1);
 			pingedFrom = true;
 		} else {
+			lastHit = null;
 			FSM.animator.Play("Unroll", 1);
 		}
 	}
 	
 	public override void Tick() {
 		// Process Pings and Enemy contact I guess
+		// Debug.Log("Moving forward " + power + "|" + FSM.transform.forward);
 		FSM.controller.Move(FSM.transform.forward * power * 5f * Time.deltaTime);
 		// After transition to Idle, check if within buffer
 		// Only allow if transition from contact, that is clear the pingBuffer from other transition sources
@@ -679,6 +707,33 @@ public class PlayerImpalingState : PlayerActionState
 	}
 }
 
+public class PlayerVolleyingState : PlayerActionState
+{
+	private float volleyCharge;
+	
+	public PlayerVolleyingState(PlayerStateMachine ctx) : base(ctx) { }
+	
+	public override void Enter() {
+		volleyCharge = Time.time;
+	}
+	
+	public override void Exit() {
+		if (Time.time - volleyCharge >= 0.5f) {
+			Collider[] hits = Physics.OverlapSphere(FSM.transform.position, 12f, LayerMask.GetMask("Enemy"));
+			foreach (Collider hit in hits) {
+				GameObject spine = Transform.Instantiate(FSM.attackProfile.spineProjectile, FSM.transform.position + new Vector3(0.1f, 0.2f, 0f), Quaternion.identity);
+				GameObject spine1 = Transform.Instantiate(FSM.attackProfile.spineProjectile, FSM.transform.position + new Vector3(0f, 0.25f, 0f), Quaternion.identity);
+				GameObject spine2 = Transform.Instantiate(FSM.attackProfile.spineProjectile, FSM.transform.position + new Vector3(0f, 0.3f, 0.04f), Quaternion.identity);
+				Vector3 enemyDir = hit.transform.position - FSM.transform.position;
+				spine.transform.rotation = Quaternion.LookRotation(Vector3.Cross(Vector3.forward, enemyDir), enemyDir);
+				spine1.transform.rotation = Quaternion.LookRotation(Vector3.Cross(Vector3.forward, enemyDir), enemyDir);
+				spine2.transform.rotation = Quaternion.LookRotation(Vector3.Cross(Vector3.forward, enemyDir), enemyDir);
+				
+			}
+		}
+	}
+}
+
 public class PlayerGrabbingState : PlayerActionState
 {
 	public GameObject target;
@@ -736,6 +791,29 @@ public class PlayerStunnedState : PlayerActionState
 		if (stunTimer <= 0f) {
 			stunTimer = 0f;
 			FSM.ActionTransition(FSM.actionStates.Idle);
+		}
+	}
+}
+
+public class PlayerAbsorptionState : PlayerActionState
+{
+	public float charge;
+	
+	public PlayerAbsorptionState(PlayerStateMachine ctx) : base(ctx) { }
+	
+	public override void Enter() {
+		// Animator
+	}
+	
+	public override void Tick() {
+		// Placeholder pending for animation rider
+		FSM.ActionTransition(FSM.actionStates.Idle);
+	}
+	
+	public override void Exit() {
+		Collider[] hits = Physics.OverlapSphere(FSM.transform.position, 4f + (2f * charge), LayerMask.GetMask("Enemy"));
+		foreach (Collider hit in hits) {
+			hit.GetComponent<EnemyAI>().AttemptAbsorb(FSM);
 		}
 	}
 }
@@ -842,5 +920,72 @@ public class PlayerAimState : PlayerMetaState
 			return new YankCommand();
 		}
 		return new VoidCommand();
+	}
+}
+
+public class PlayerDefaultState : PlayerDefenseState
+{
+	public PlayerDefaultState(PlayerStateMachine ctx) : base(ctx) { }
+}
+
+public class PlayerShellState : PlayerDefenseState
+{
+	public HashSet<EnemyAI> ploughed;
+	
+	// Probably need an entirely new state for the modified drag
+	// Also probably need a new command and state and FSM contextcallback for Volley
+	
+	public PlayerShellState(PlayerStateMachine ctx) : base(ctx) {
+		ploughed = new HashSet<EnemyAI>();
+	}
+	
+	public override void Enter() {
+		FSM.movementStates.Airborne.shelled = true;
+		FSM.movementStates.Slam.shelled = true;
+		FSM.shelled = true;
+	}
+	
+	public override void Exit() {
+		FSM.movementStates.Airborne.shelled = false;
+		FSM.movementStates.Slam.shelled = false;
+		FSM.shelled = false;
+		
+		foreach (EnemyAI enem in ploughed) {
+			enem.Unplough(FSM);
+		}
+		ploughed = new HashSet<EnemyAI>();
+	}
+	
+	public override Command FilterCommand(Command command) {
+		if (command is SpineCommand) {
+			return new VolleyCommand();
+		}
+		return command;
+	}
+	
+	public void PloughDamage() {
+		foreach (EnemyAI enem in ploughed) {
+			enem.takeDamage(10f, 0f, FSM);
+		}
+	}
+}
+
+public class PlayerAbsorbingState : PlayerDefenseState
+{
+	private float chargeTime = 0f;
+	
+	public PlayerAbsorbingState(PlayerStateMachine ctx) : base(ctx) { }
+	
+	public override void Enter() {
+		chargeTime = 0f;
+	}
+	
+	public override void Exit() {
+		FSM.actionStates.Absorption.charge = Mathf.Min(3f, Mathf.Max(1f, chargeTime));
+		FSM.ActionTransition(FSM.actionStates.Absorption);
+	}
+	
+	public override void Tick() {
+		chargeTime += Time.deltaTime;
 	}
 }

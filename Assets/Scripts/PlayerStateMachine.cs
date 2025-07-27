@@ -45,9 +45,11 @@ public class PlayerStateMachine : MonoBehaviour
 		public PlayerRollingState Rolling { get; }
 		public PlayerSlammingState Slamming { get; }
 		public PlayerImpalingState Impaling { get; }
+		public PlayerVolleyingState Volleying { get; }
 		public PlayerGrabbingState Grabbing { get; }
 		public PlayerYankingState Yanking { get; }
 		public PlayerStunnedState Stunned { get; }
+		public PlayerAbsorptionState Absorption { get; }
 
 		
 		public ActionRegion(PlayerIdleState idleState,
@@ -59,9 +61,11 @@ public class PlayerStateMachine : MonoBehaviour
 			PlayerRollingState rollingState,
 			PlayerSlammingState slammingState,
 			PlayerImpalingState impalingState,
+			PlayerVolleyingState volleyingState,
 			PlayerGrabbingState grabbingState,
 			PlayerYankingState yankingState,
-			PlayerStunnedState stunnedState) {
+			PlayerStunnedState stunnedState,
+			PlayerAbsorptionState absorptionState) {
 			
 			this.Idle = idleState;
 			this.Jabbing = jabbingState;
@@ -72,9 +76,11 @@ public class PlayerStateMachine : MonoBehaviour
 			this.Rolling = rollingState;
 			this.Slamming = slammingState;
 			this.Impaling = impalingState;
+			this.Volleying = volleyingState;
 			this.Grabbing = grabbingState;
 			this.Yanking = yankingState;
 			this.Stunned = stunnedState;
+			this.Absorption = absorptionState;
 		}
 	}
 	
@@ -96,12 +102,30 @@ public class PlayerStateMachine : MonoBehaviour
 		}
 	}
 	
+	public class DefenseRegion {
+		public PlayerDefaultState Default { get; }
+		public PlayerShellState Shell { get; }
+		public PlayerAbsorbingState Absorb { get; }
+		
+		public DefenseRegion(PlayerDefaultState defaultState,
+			PlayerShellState shellState,
+			PlayerAbsorbingState absorbingState) {
+			
+			this.Default = defaultState;
+			this.Shell = shellState;
+			this.Absorb = absorbingState;
+		}
+		
+	}
+	
 	public MovementRegion movementStates { get; private set; }
 	public ActionRegion actionStates { get; private set; }
 	public MetaRegion metaStates { get; private set; }
+	public DefenseRegion defenseStates { get; private set; }
 	private PlayerMovementState currentMovement;
 	private PlayerActionState currentAction;
 	private PlayerMetaState currentMeta;
+	private PlayerDefenseState currentDefense;
 
     // Update is called once per frame
     void Update()
@@ -115,6 +139,7 @@ public class PlayerStateMachine : MonoBehaviour
 		this.currentMeta?.Tick();
 		this.currentAction?.Tick();
         this.currentMovement?.Tick();
+		this.currentDefense?.Tick();
     }
 	
 	public void MovementTransition(PlayerMovementState newState) {
@@ -138,13 +163,25 @@ public class PlayerStateMachine : MonoBehaviour
 		Debug.Log("Transiting to " + this.currentMeta);
 	}
 	
+	public void DefenseTransition(PlayerDefenseState newState) {
+		this.currentDefense?.Exit();
+		this.currentDefense = newState;
+		this.currentDefense?.Enter();
+		Debug.Log("Transiting to " + this.currentDefense);
+	}
+	
 	// Input Control
 	public Vector3 inputDirection;
+	public bool shelled = false;
 	public bool movementAllowed = true;
 	[SerializeField] GameObject offenseGearWheel;
 	[SerializeField] GameObject defenseGearWheel;
+	[SerializeField] GameObject emulsion;
 	public CinemachineCamera aimCam;
 	public CinemachineOrbitalFollow freeCam;
+	public CinemachineCamera emulCam;
+	private int numEmulsions = 0;
+	private List<GameObject> emulsionList = new List<GameObject>();
 	public GameObject aimAnchor;
 	public RectTransform reticle;
 	private int inGearWheel = 0; // 0 = Not in Gear Wheel, 1 = Offense, 2 = Defense
@@ -156,9 +193,28 @@ public class PlayerStateMachine : MonoBehaviour
 			freeCam.HorizontalAxis.Value = transform.eulerAngles.y;
 			aimCam.Priority = 0;
 		} else {
-			aimCam.Priority = 2;
+			aimCam.Priority = 3;
 		}
 	}
+	public void EnterEmulsion() {
+		numEmulsions++;
+		if (numEmulsions != 0) {
+			emulCam.GetComponent<CinemachineOrbitalFollow>().HorizontalAxis.Value = freeCam.HorizontalAxis.Value;
+			emulCam.GetComponent<CinemachineOrbitalFollow>().VerticalAxis.Value = freeCam.VerticalAxis.Value;
+			emulCam.Priority = 2;
+			moveSpeed = 20f;
+		}
+	}
+	public void ExitEmulsion() {
+		numEmulsions--;
+		if (numEmulsions == 0) {
+			freeCam.HorizontalAxis.Value = emulCam.GetComponent<CinemachineOrbitalFollow>().HorizontalAxis.Value;
+			freeCam.VerticalAxis.Value = emulCam.GetComponent<CinemachineOrbitalFollow>().VerticalAxis.Value;
+			emulCam.Priority = 0;
+			moveSpeed = 8f;
+		}
+	}
+	
 	
 	public void OnMove(InputAction.CallbackContext context) {
 		Vector2 direction = context.ReadValue<Vector2>() * moveSpeed;
@@ -170,6 +226,7 @@ public class PlayerStateMachine : MonoBehaviour
 		if (!context.started) return;
 		Command command = new JumpCommand();
 		command = this.currentMeta.FilterCommand(command);
+		command = this.currentDefense.FilterCommand(command);
 		command = this.currentMovement.FilterCommand(command);
 		command = this.currentAction.FilterCommand(command);
 		command.execute(this.currentMovement, this.currentAction);
@@ -179,20 +236,41 @@ public class PlayerStateMachine : MonoBehaviour
 	}
 
 	public void OnJab(InputAction.CallbackContext context) {
-		if (!context.started) return;
-		Command command = new JabCommand();
-		command = this.currentMeta.FilterCommand(command);
-		command = this.currentMovement.FilterCommand(command);
-		command = this.currentAction.FilterCommand(command);
-		command.execute(this.currentMovement, this.currentAction);
+		if (context.started) {
+			Command command = new JabCommand();
+			command = this.currentMeta.FilterCommand(command);
+			command = this.currentDefense.FilterCommand(command);
+			command = this.currentMovement.FilterCommand(command);
+			command = this.currentAction.FilterCommand(command);
+			command.execute(this.currentMovement, this.currentAction);
+		} else if (context.canceled) {
+			if (currentAction == actionStates.Volleying) {
+				ActionTransition(actionStates.Idle);
+			}
+		}
 	}
-	public void RollCollideHelper(GameObject other) {
+	public void RollCollideHelper(GameObject other, float dmg, float stun) {
+		Debug.Log("Rolled into " + other);
 		if (currentAction == actionStates.Rolling) {
+			if (currentDefense == defenseStates.Shell) {
+				// Don't exit roll
+				// Ploughed enemies do not collide with player
+				if (other.GetComponent<EnemyAI>().AttemptPlough(this)) {
+					defenseStates.Shell.ploughed.Add(other.GetComponent<EnemyAI>());
+					// Stun 'n' Drag the enemy 
+					// Blast all ploughed enemies
+					defenseStates.Shell.PloughDamage();
+					// When either Shell exits or Roll ends process the plough
+					return;
+				}
+			}
+			if (actionStates.Rolling.lastHit == other) return;
 			// Play animation and link state exit to machine rider?
 			// If I can actually make the damn animations work zzzz
 			// For now this shall suffice
 			actionStates.Rolling.lastHit = other;
 			actionStates.Rolling.lastHitTime = Time.time;
+			other.GetComponent<EnemyAI>().takeDamage(dmg, stun, this);
 			ActionTransition(actionStates.Idle);
 		}
 	}
@@ -208,6 +286,7 @@ public class PlayerStateMachine : MonoBehaviour
 		if (Time.time - actionStates.Attenuate.lastExit <= 1f) return; // Move CD-checking to the States later
 		Command command = new AttenuateCommand();
 		command = this.currentMeta.FilterCommand(command);
+		command = this.currentDefense.FilterCommand(command);
 		command = this.currentMovement.FilterCommand(command);
 		command = this.currentAction.FilterCommand(command);
 		command.execute(this.currentMovement, this.currentAction);
@@ -217,6 +296,7 @@ public class PlayerStateMachine : MonoBehaviour
 		if (context.started) {
 			Command command = new ConsumeCommand();
 			command = this.currentMeta.FilterCommand(command);
+			command = this.currentDefense.FilterCommand(command);
 			command = this.currentMovement.FilterCommand(command);
 			command = this.currentAction.FilterCommand(command);
 			command.execute(this.currentMovement, this.currentAction);
@@ -251,6 +331,39 @@ public class PlayerStateMachine : MonoBehaviour
 			MetaTransition(nextState);
 		} else if (context.canceled) {
 			MetaTransition(metaStates.Normal);
+		}
+	}
+	
+	public void OnDefenseHold(InputAction.CallbackContext context) {
+		PlayerDefenseState nextState = defenseStates.Default;
+		switch (equippedDefense) {
+			case 0:
+				break;
+			case 1:
+				nextState = defenseStates.Shell;
+				break;
+			case 2:
+				nextState = defenseStates.Absorb;
+				break;
+			case 3:
+				if (!context.started) return;
+				emulsionList.RemoveAll(item => item == null);
+				if (emulsionList.Count >= 3) {
+					if (emulsionList[0] != null) {
+						Destroy(emulsionList[0]);
+					}
+					emulsionList.RemoveAt(0);
+				}
+				GameObject em = Transform.Instantiate(emulsion, transform.position, Quaternion.identity);
+				emulsionList.Add(em);
+				break;
+			default:
+				break;
+		}
+		if (context.started) {
+			DefenseTransition(nextState);
+		} else if (context.canceled) {
+			DefenseTransition(defenseStates.Default);
 		}
 	}
 	
@@ -327,6 +440,7 @@ public class PlayerStateMachine : MonoBehaviour
 	
 	public void getHit(GameObject src, float dmg) {
 		if (currentAction == actionStates.Attenuate) return;
+		if (currentDefense == defenseStates.Shell) dmg *= 0.7f;
 		HP -= dmg;
 		if (HP <= 0) {
 			animator.Play("Deflate");
@@ -359,15 +473,22 @@ public class PlayerStateMachine : MonoBehaviour
 			new PlayerRollingState(this),
 			new PlayerSlammingState(this),
 			new PlayerImpalingState(this),
+			new PlayerVolleyingState(this),
 			new PlayerGrabbingState(this),
 			new PlayerYankingState(this),
-			new PlayerStunnedState(this)
+			new PlayerStunnedState(this),
+			new PlayerAbsorptionState(this)
 		);
 		this.metaStates = new MetaRegion(
 			new PlayerNormalState(this),
 			new PlayerCurledState(this),
 			new PlayerLockdownState(this),
 			new PlayerAimState(this)
+		);
+		this.defenseStates = new DefenseRegion(
+			new PlayerDefaultState(this),
+			new PlayerShellState(this),
+			new PlayerAbsorbingState(this)
 		);
 		this.inputDirection = Vector3.zero;
 		this.currentVelocity = Vector3.zero;
@@ -378,6 +499,7 @@ public class PlayerStateMachine : MonoBehaviour
 		this.MovementTransition(movementStates.Grounded);
 		this.ActionTransition(actionStates.Idle);
 		this.MetaTransition(metaStates.Normal);
+		this.DefenseTransition(defenseStates.Default);
 		HP += maxHP;
 		
 		Cursor.visible = false;

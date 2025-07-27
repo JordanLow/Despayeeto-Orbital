@@ -35,7 +35,7 @@ public class RadialMenu : MonoBehaviour
 	public void OnGearSelect(InputAction.CallbackContext context) {
 		if (!gameObject.activeInHierarchy) return;
 		Vector2 dir = context.ReadValue<Vector2>();
-		if (dir.magnitude < 5f) return;;
+		if (dir.magnitude < 0.9f) return;;
 		float angle = Mathf.Atan2(dir.y, dir.x);
 		if (angle < 0) angle = 2 * Mathf.PI + angle;
 		att = Mathf.FloorToInt(((angle + (Mathf.PI / this.count)) % (2 * Mathf.PI)) / (2 * Mathf.PI / this.count));
