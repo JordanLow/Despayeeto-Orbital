@@ -26,7 +26,7 @@ public class PangolinAI : EnemyAI
 	
 	private float animTime;
 	private float scratchDuration = 1f;
-	private float bargeDuration = 1f;
+	private float bargeDuration = 3.2f;
 	
 	private float scaleCD = 0f;
 	
@@ -66,10 +66,10 @@ public class PangolinAI : EnemyAI
 		if (pangState == State.Dead) return;
 		
 		RaycastHit hit;
-		bool isGrounded = Physics.Raycast(transform.position, Vector3.down, out hit, 0.6f, LayerMask.GetMask("Ground"));
+		bool isGrounded = Physics.Raycast(transform.position, Vector3.down, out hit, 0.1f, LayerMask.GetMask("Ground"));
 		
 		if (isGrounded) {
-			transform.position = new Vector3(transform.position.x, hit.point.y + 0.51f, transform.position.z);
+			transform.position = new Vector3(transform.position.x, hit.point.y + 0.01f, transform.position.z);
 		}
 		
 		if (pangState == State.Stunned) {
@@ -93,7 +93,7 @@ public class PangolinAI : EnemyAI
 			Vector3 move = Vector3.zero;
 			if (speed > 0f) move = transform.forward.normalized * 7f * (1f + speed) * Time.fixedDeltaTime;
 			if (isGrounded) {
-				move.y = hit.point.y - transform.position.y + 0.51f;
+				move.y = hit.point.y - transform.position.y + 0.01f;
 			}
 			rb.MovePosition(rb.position + move);
 
@@ -111,11 +111,11 @@ public class PangolinAI : EnemyAI
 			Vector3 move = Vector3.zero;
 			if (speed > 0f) move = transform.forward.normalized * 3f * (1f + speed) * Time.fixedDeltaTime;
 			if (isGrounded) {
-				move.y = hit.point.y - transform.position.y + 0.51f;
+				move.y = hit.point.y - transform.position.y + 0.01f;
 			}
 			rb.MovePosition(rb.position + move);
 
-			if (animTime >= scratchDuration) {
+			if (animTime >= bargeDuration) {
 				animTime = 0f;
 				pangState = State.Wandering;
 			}
@@ -192,6 +192,12 @@ public class PangolinAI : EnemyAI
 	public override void AttemptYank(PlayerStateMachine src) { }
 	
 	public override void AttemptGrab(PlayerStateMachine src) { }
+	
+	public override bool AttemptPlough(PlayerStateMachine src) { 
+		return false;
+	}
+	
+	public override void Unplough(PlayerStateMachine src) { }
 	
 	public override void takeDamage(float dmg, float stunLength, PlayerStateMachine src) {
 		if (pangState == State.Scales) {
