@@ -81,7 +81,7 @@ public class FrogAI : EnemyAI
 		if (frogState == State.Dead) return;
 		
 		RaycastHit hit;
-		bool isGrounded = Physics.Raycast(transform.position, Vector3.down, out hit, 0.1f, LayerMask.GetMask("Ground"));
+		bool isGrounded = Physics.Raycast(transform.position + new Vector3(0f, 1f, 0f), Vector3.down, out hit, 1.1f, LayerMask.GetMask("Ground"));
 		
 		if (frogState == State.Hopping) {
 			if (!hopStart) return;

@@ -20,6 +20,9 @@ public class SpinningBladeScript : EnemyAI
 	[SerializeField] private float maxSpeed = 4f;
 	private float curSpeed = 0f;
 	
+	[SerializeField] private float rateLimit = 0.2f;
+	private float rateTimer;
+	
 	protected override void Start()
 	{
 		rb = GetComponent<Rigidbody>();
@@ -59,8 +62,9 @@ public class SpinningBladeScript : EnemyAI
 			}
 		} else {
 			PathfindToPlayer(hits[0].transform);
+			Debug.Log(path.corners.Length);
 			if (path.corners.Length != 2) {
-				path = null;
+				path = new NavMeshPath();
 				if (bladeState == State.Chasing) {
 					bladeState = State.Deactivated;
 					hitbox.DisableHitbox();
@@ -88,6 +92,7 @@ public class SpinningBladeScript : EnemyAI
 					Vector3 dest = transform.position + transform.forward.normalized * Time.fixedDeltaTime * (curSpeed + 1);
 					NavMeshHit navhit;
 					bool check = NavMesh.SamplePosition(dest - new Vector3(0, 1.1f, 0), out navhit, 0.2f, NavMesh.AllAreas);
+					Debug.Log(check);
 					if (check) {
 						rb.MovePosition(transform.position + transform.forward.normalized * Time.fixedDeltaTime * (curSpeed + 1));
 					} else {
@@ -111,6 +116,18 @@ public class SpinningBladeScript : EnemyAI
 			stunDuration = 3f;
 		} else {
 			stunDuration = 1f;
+		}
+	}
+	
+	protected override void PathfindToPlayer(Transform player) {
+		for (int i = 0; i < 10; i++) {
+			if (NavMesh.SamplePosition(player.position, out NavMeshHit hit, 2f, NavMesh.AllAreas)) {
+				NavMesh.CalculatePath(transform.position - new Vector3(0, 1.1f, 0), hit.position, NavMesh.AllAreas, path);
+				target = player.GetComponent<PlayerStateMachine>();
+				pathIdx = 0;
+				Debug.Log(path.corners.Length);
+				return;
+			}
 		}
 	}
 }

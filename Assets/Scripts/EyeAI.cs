@@ -41,6 +41,7 @@ public class EyeAI : EnemyAI
 		RaycastHit groundHit;
 		bool nearGround = Physics.Raycast(transform.position, Vector3.down, out groundHit, 1.3f, LayerMask.GetMask("Ground"));
 		if (HP <= 0 && eyeState != State.Dead) {
+			animator.Play("Death");
 			eyeState = State.Dead;
 			return;
 		}
