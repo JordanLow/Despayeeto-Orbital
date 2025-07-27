@@ -119,6 +119,10 @@ public class SpinningBladeScript : EnemyAI
 		}
 	}
 	
+	public override void UnlockPower() {
+		unlock.SetActive(true);
+	}
+	
 	protected override void PathfindToPlayer(Transform player) {
 		for (int i = 0; i < 10; i++) {
 			if (NavMesh.SamplePosition(player.position, out NavMeshHit hit, 2f, NavMesh.AllAreas)) {
