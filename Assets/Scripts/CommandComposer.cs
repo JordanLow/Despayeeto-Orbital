@@ -76,6 +76,14 @@ public class SpineCommand : Command
 	}
 }
 
+public class VolleyCommand : Command
+{
+	public void execute(PlayerMovementState movementState, PlayerActionState actionState) {
+		movementState.OnVolleyCommand();
+		actionState.OnVolleyCommand();
+	}
+}
+
 public class ImpaleCommand : Command
 {
 	public void execute(PlayerMovementState movementState, PlayerActionState actionState) {
