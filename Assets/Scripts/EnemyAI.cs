@@ -4,7 +4,7 @@ using UnityEngine.AI;
 // Refactor into extensible for different enemy types in the future
 public class EnemyAI : MonoBehaviour
 {
-	[SerializeField] private float speed;
+	[SerializeField] protected float speed;
 	
     protected Rigidbody rb;
 	protected NavMeshPath path;
@@ -16,6 +16,8 @@ public class EnemyAI : MonoBehaviour
 	[SerializeField] protected float Devourable = 10f;
 	[SerializeField] public float heightOffset = 0.45f;
 	
+	[SerializeField] public int type = 1; // 0 = Basic, 1 = Large, 2 = Radical, 3 = Sticky
+	
 	private enum State {
 		Wandering,
 		Chasing,
@@ -23,6 +25,7 @@ public class EnemyAI : MonoBehaviour
 		Bounded,
 		Stunned,
 		Yanked,
+		Ploughed,
 		Dead
 	}
 	
@@ -33,6 +36,7 @@ public class EnemyAI : MonoBehaviour
 	private Vector3 yankTo;
 	private Vector3 yankFrom;
 	private float yankTime = 0f;
+	private PlayerStateMachine ploughedBy;
 	public float stunDuration = 0f;
 	protected PlayerStateMachine target;
 	
@@ -70,6 +74,10 @@ public class EnemyAI : MonoBehaviour
 				return;
 			}
 			rb.MovePosition(Vector3.Lerp(yankFrom, yankTo + ((yankFrom - yankTo).normalized * 0.6f), yankTime * 3f));
+			return;
+		}
+		if (state == State.Ploughed) {
+			rb.MovePosition(ploughedBy.transform.position);
 			return;
 		}
 		if (stunDuration > 0f && state != State.Stunned) {
@@ -235,6 +243,26 @@ public class EnemyAI : MonoBehaviour
 		src.MovementTransition(src.movementStates.Bound);
 		src.ActionTransition(src.actionStates.Bounding);
 		src.movementStates.Bound.boundedEnemy.SetBound(true);
+	}
+	
+	public virtual bool AttemptPlough(PlayerStateMachine src) {
+		animator.Play("EmptyAnimanim"); // Placeholder for actual stun animation
+		state = State.Ploughed;
+		ploughedBy = src;
+		Physics.IgnoreCollision(GetComponent<Collider>(), src.controller);
+		return true;
+	}
+	
+	public virtual void Unplough(PlayerStateMachine src) {
+		animator.Play("EmptyAnimanim"); // Placeholder for actual stun animation
+		state = State.Stunned;
+		takeDamage(10f, 0.5f, src);
+		ploughedBy = null;
+		Physics.IgnoreCollision(GetComponent<Collider>(), src.controller, false);
+	}
+	
+	public virtual void AttemptAbsorb(PlayerStateMachine src) {
+		Destroy(gameObject);
 	}
 	
 	public virtual void UnlockPower() { }
