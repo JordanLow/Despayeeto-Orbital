@@ -25,7 +25,7 @@ public class PangolinAI : EnemyAI
 	private float rateTimer;
 	
 	private float animTime;
-	private float scratchDuration = 1f;
+	private float scratchDuration = 3.2f;
 	private float bargeDuration = 3.2f;
 	
 	private float scaleCD = 0f;
@@ -40,9 +40,9 @@ public class PangolinAI : EnemyAI
 		pangState = State.Wandering;
 		scratch = new AnimationCurve(
 			new Keyframe(0, 0),
-			new Keyframe(0.33f, 0),
-			new Keyframe(0.5f, 1f),
-			new Keyframe(0.75f, 1f),
+			new Keyframe(0.5f, 0),
+			new Keyframe(0.6f, 1f),
+			new Keyframe(0.65f, 0f),
 			new Keyframe(1f, 0)
 		);
 		barge = new AnimationCurve(
@@ -59,7 +59,7 @@ public class PangolinAI : EnemyAI
 	protected override void FixedUpdate() {
 		
 		if (HP <= 0 && pangState != State.Dead) {
-			animator.Play("Idle");
+			animator.Play("Death");
 			pangState = State.Dead;
 			return;
 		}
@@ -78,6 +78,7 @@ public class PangolinAI : EnemyAI
 			if (stunDuration <= 0f) {
 				stunDuration = 0f;
 				pangState = State.Wandering;
+				animator.Play("Idle-to-Walk");
 			} else {
 				return;
 			}
@@ -148,7 +149,7 @@ public class PangolinAI : EnemyAI
 						// Scales if available
 						if (scaleCD == 0f) {
 							pangState = State.Scales;
-							// Play scale animation
+							animator.Play("Scales");
 						} else {
 							pangState = State.Barge;
 							animator.Play("Barge");
@@ -203,6 +204,7 @@ public class PangolinAI : EnemyAI
 		if (pangState == State.Scales) {
 			if (Vector3.Angle(transform.forward, src.transform.position - transform.position) <= 65f) return;
 			pangState = State.Stunned;
+			animator.Play("Stun");
 			stunDuration = 1.5f;
 			scaleCD = 7f;
 		}
