@@ -67,3 +67,43 @@ public class SlamCommand : Command
 		actionState.OnSlamCommand();
 	}
 }
+
+public class SpineCommand : Command
+{
+	public void execute(PlayerMovementState movementState, PlayerActionState actionState) {
+		movementState.OnSpineCommand();
+		actionState.OnSpineCommand();
+	}
+}
+
+public class VolleyCommand : Command
+{
+	public void execute(PlayerMovementState movementState, PlayerActionState actionState) {
+		movementState.OnVolleyCommand();
+		actionState.OnVolleyCommand();
+	}
+}
+
+public class ImpaleCommand : Command
+{
+	public void execute(PlayerMovementState movementState, PlayerActionState actionState) {
+		movementState.OnImpaleCommand();
+		actionState.OnImpaleCommand();
+	}
+}
+
+public class GrabCommand : Command
+{
+	public void execute(PlayerMovementState movementState, PlayerActionState actionState) {
+		movementState.OnGrabCommand();
+		actionState.OnGrabCommand();
+	}
+}
+
+public class YankCommand : Command
+{
+	public void execute(PlayerMovementState movementState, PlayerActionState actionState) {
+		movementState.OnYankCommand();
+		actionState.OnYankCommand();
+	}
+}

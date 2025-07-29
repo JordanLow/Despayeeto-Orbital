@@ -13,5 +13,6 @@ MonoBehaviour:
   m_Name: Slam
   m_EditorClassIdentifier: 
   animationClip: {fileID: 0}
-  damage: 20
+  damage: 45
+  stun: 0
   attackName: Slam

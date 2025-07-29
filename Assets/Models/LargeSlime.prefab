@@ -187,9 +187,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 2
-  HP: 40
+  HP: 80
   Devourable: 20
   heightOffset: 0.65
+  stunDuration: 0
 --- !u!1 &538345592752350984
 GameObject:
   m_ObjectHideFlags: 0
@@ -572,7 +573,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   owner: {fileID: 398818655135828103}
-  damage: 30
+  damage: 240
 --- !u!1 &6362600844910920414
 GameObject:
   m_ObjectHideFlags: 0
