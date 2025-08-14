@@ -444,7 +444,7 @@ public class PlayerStateMachine : MonoBehaviour
 		HP -= dmg;
 		if (HP <= 0) {
 			animator.Play("Deflate");
-			GetComponent<PlayerInput>().DeactivateInput();
+			// GetComponent<PlayerInput>().DeactivateInput();
 		}
 	}
 	public void BasicHeal() {

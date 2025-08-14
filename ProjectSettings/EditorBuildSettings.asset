@@ -8,9 +8,12 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/SlimeVisualiser.unity
     guid: fdb778175960cc34f8faa200a956760c
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/SampleLevel.unity
     guid: 35868c91985ecf24884dd559edb73d30
+  - enabled: 1
+    path: Assets/Scenes/VideoLevel.unity
+    guid: 153c504b35f6588458048b8974411d78
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 861ae367858f383438e0e5ad3fa2f4bd, type: 3}
   m_UseUCBPForAssetBundles: 0
