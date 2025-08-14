@@ -500,9 +500,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 0
-  HP: 20
-  Devourable: 10
+  HP: 60
+  Devourable: 20
   heightOffset: 0.45
+  type: 1
   stunDuration: 0
   unlock: {fileID: 0}
   hitbox: {fileID: 7247503618071710856}

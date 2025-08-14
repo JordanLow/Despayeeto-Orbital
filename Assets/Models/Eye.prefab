@@ -622,7 +622,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   owner: {fileID: 7494071495697010602}
-  damage: 20
+  damage: 65
 --- !u!1 &5003843893039560516
 GameObject:
   m_ObjectHideFlags: 0
@@ -872,7 +872,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   owner: {fileID: 7494071495697010602}
-  damage: 30
+  damage: 150
 --- !u!1 &7244574886320958274
 GameObject:
   m_ObjectHideFlags: 0
@@ -1245,7 +1245,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 3
-  HP: 20
+  HP: 30
   Devourable: 10
   heightOffset: 0.45
   type: 7
